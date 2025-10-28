@@ -1,7 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1.19-labs@sha256:dce1c693ef318bca08c964ba3122ae6248e45a1b96d65c4563c8dc6fe80349a2
 
 # Builder
-FROM --platform=$BUILDPLATFORM node:22-bullseye@sha256:cd951bb228ddf85882951d4bf4acefc5314eb2eb66eee002256f4bb17c2293e3 AS builder
+FROM --platform=$BUILDPLATFORM node:24-bullseye@sha256:ab89d607cad794b7a597842e7129898ead268742ddf05a1fe94ced7f21a2dbb8 AS builder
 
 # Support custom branch of the js-sdk. This also helps us build images of element-web develop.
 ARG USE_CUSTOM_SDKS=false
