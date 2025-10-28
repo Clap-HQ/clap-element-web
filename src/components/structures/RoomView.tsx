@@ -163,6 +163,10 @@ interface IRoomProps extends RoomViewProps {
      * If true, hide the header
      */
     hideHeader?: boolean;
+    /*
+     * If true, hide the composer
+     */
+    hideComposer?: boolean;
 }
 
 export { MainSplitContentType };
@@ -2443,6 +2447,7 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
 
         let messageComposer;
         const showComposer =
+            !this.props.hideComposer &&
             !isRoomEncryptionLoading &&
             // joined and not showing search results
             myMembership === KnownMembership.Join &&
