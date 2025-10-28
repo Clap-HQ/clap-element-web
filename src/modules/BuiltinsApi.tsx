@@ -35,9 +35,9 @@ export class ElementWebBuiltinsApi implements BuiltinsApi {
         return this._roomView;
     }
 
-    public renderRoomView(roomId: string): React.ReactNode {
+    public renderRoomView(roomId: string, props?: Omit<RoomViewProps, "roomId">): React.ReactNode {
         const Component = this.getRoomViewComponent();
-        return <Component roomId={roomId} />;
+        return <Component roomId={roomId} {...props} />;
     }
 
     public renderRoomAvatar(roomId: string, size?: string): React.ReactNode {
