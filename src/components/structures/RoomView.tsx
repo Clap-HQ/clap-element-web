@@ -2617,6 +2617,10 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
             defaultSize = 420;
             analyticsRoomType =
                 this.state.mainSplitContentType === MainSplitContentType.Call ? "video_room" : "maximised_widget";
+        } else if (this.context.rightPanelStore.currentCard.phase === RightPanelPhases.MarkdownPanel) {
+            // MarkdownPanel needs more space for editing
+            sizeKey = "markdown";
+            defaultSize = 1000;
         }
 
         return (

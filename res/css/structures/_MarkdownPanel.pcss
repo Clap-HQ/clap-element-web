@@ -1,0 +1,143 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_MarkdownPanel {
+    order: 2;
+    flex: 1 1 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    .mx_BaseCard_header {
+        gap: var(--cpd-space-3x);
+    }
+
+    .mx_MarkdownPanel_content {
+        padding: var(--cpd-space-4x);
+        display: flex;
+        flex-direction: column;
+        gap: var(--cpd-space-4x);
+    }
+
+    .mx_MarkdownPanel_toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--cpd-space-3x);
+        padding-bottom: var(--cpd-space-2x);
+        border-bottom: 1px solid var(--cpd-color-gray-400);
+    }
+
+    .mx_MarkdownPanel_rendered {
+        overflow-x: hidden;
+        padding: var(--cpd-space-4x);
+        background: var(--cpd-color-bg-subtle-secondary);
+        border-radius: var(--cpd-radius-md);
+        font-family: var(--cpd-font-family-sans);
+        line-height: 1.6;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: var(--cpd-space-4x);
+            margin-bottom: var(--cpd-space-2x);
+            font-weight: var(--cpd-font-weight-semibold);
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        h1 {
+            font-size: var(--cpd-font-size-heading-lg);
+        }
+
+        h2 {
+            font-size: var(--cpd-font-size-heading-md);
+        }
+
+        ul, ol {
+            padding-left: var(--cpd-space-8x);
+            margin: var(--cpd-space-2x) 0;
+        }
+
+        li {
+            margin: var(--cpd-space-1x) 0;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        p {
+            margin: var(--cpd-space-2x) 0;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        code {
+            background: var(--cpd-color-bg-subtle-primary);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: var(--cpd-font-family-mono);
+            font-size: var(--cpd-font-size-body-sm);
+            word-wrap: break-word;
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+
+        pre {
+            background: var(--cpd-color-bg-subtle-primary);
+            padding: var(--cpd-space-4x);
+            border-radius: var(--cpd-radius-md);
+            overflow-x: auto;
+
+            code {
+                background: transparent;
+                padding: 0;
+            }
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--cpd-color-gray-400);
+            margin: var(--cpd-space-4x) 0;
+        }
+
+        a {
+            color: var(--cpd-color-text-action-accent);
+            text-decoration: none;
+            word-wrap: break-word;
+            word-break: break-all;
+            overflow-wrap: break-word;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .mx_MarkdownPanel_editor {
+        width: 100%;
+        min-height: 200px;
+        max-height: 600px;
+        padding: var(--cpd-space-4x);
+        font-family: var(--cpd-font-family-mono);
+        font-size: var(--cpd-font-size-body-md);
+        border: 1px solid var(--cpd-color-gray-400);
+        border-radius: var(--cpd-radius-md);
+        resize: vertical;
+        background: var(--cpd-color-bg-canvas-default);
+        color: var(--cpd-color-text-primary);
+        box-sizing: border-box;
+        overflow-y: auto;
+
+        &:focus {
+            outline: 2px solid var(--cpd-color-border-focused);
+            outline-offset: 2px;
+        }
+    }
+}
