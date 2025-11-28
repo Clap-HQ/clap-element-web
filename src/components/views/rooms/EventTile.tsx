@@ -74,6 +74,7 @@ import PosthogTrackers from "../../../PosthogTrackers";
 import TileErrorBoundary from "../messages/TileErrorBoundary";
 import { haveRendererForEvent, isMessageEvent, renderTile } from "../../../events/EventTileFactory";
 import ThreadSummary, { ThreadMessagePreview } from "./ThreadSummary";
+import AIThreadSummary from "./AIThreadSummary";
 import { ReadReceiptGroup } from "./ReadReceiptGroup";
 import { type ShowThreadPayload } from "../../../dispatcher/payloads/ShowThreadPayload";
 import { isLocalRoom } from "../../../utils/localRoom/isLocalRoom";
@@ -513,6 +514,15 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             }
 
             return <p className="mx_ThreadSummary_icon">{_t("timeline|thread_info_basic")}</p>;
+        }
+
+        // Show topic thread summary for messages that are part of an LLM-classified topic group
+        // Only show in Room timeline, not in Thread panel or Search
+        if (this.context.timelineRenderingType === TimelineRenderingType.Room) {
+            const room = MatrixClientPeg.safeGet().getRoom(this.props.mxEvent.getRoomId());
+            if (room) {
+                return <AIThreadSummary mxEvent={this.props.mxEvent} room={room} />;
+            }
         }
     }
 

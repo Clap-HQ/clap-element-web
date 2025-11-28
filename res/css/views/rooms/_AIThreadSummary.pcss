@@ -1,0 +1,94 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_AIThreadSummary {
+    min-width: 200px;
+    max-width: min(calc(100% - var(--EventTile_group_line-spacing-inline-start)), 500px);
+    width: fit-content;
+    height: 36px;
+    position: relative;
+    background-color: var(--cpd-color-bg-subtle-secondary);
+    padding-inline: $spacing-12 $spacing-16;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 8px;
+    box-sizing: border-box;
+    clear: both;
+    overflow: hidden;
+    border: 1px solid var(--cpd-color-border-interactive-secondary);
+    font: var(--cpd-font-body-sm-regular);
+    margin-top: $spacing-8;
+    gap: $spacing-8;
+
+    &:hover,
+    &:focus {
+        border-color: var(--cpd-color-border-interactive-hovered);
+        background-color: var(--cpd-color-bg-subtle-primary);
+
+        .mx_AIThreadSummary_chevron {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .mx_AIThreadSummary_icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        color: var(--cpd-color-icon-secondary);
+    }
+
+    .mx_AIThreadSummary_count {
+        font-weight: var(--cpd-font-weight-semibold);
+        color: var(--cpd-color-text-primary);
+        white-space: nowrap;
+    }
+
+    .mx_AIThreadSummary_topic {
+        color: var(--cpd-color-text-secondary);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mx_AIThreadSummary_chevron {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 40px;
+        box-sizing: border-box;
+        background: linear-gradient(270deg, var(--cpd-color-bg-subtle-secondary) 50%, transparent 100%);
+        opacity: 0;
+        transform: translateX(40px);
+        transition: all 0.1s ease-in-out;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: var(--cpd-space-1x);
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            mask-image: url("@vector-im/compound-design-tokens/icons/chevron-right.svg");
+            mask-position: center;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            background-color: var(--cpd-color-icon-secondary);
+        }
+    }
+
+    .mx_MessagePanel_narrow & {
+        min-width: initial;
+        max-width: 100%;
+        width: initial;
+    }
+}

@@ -1,0 +1,125 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_AIThreadListPanel {
+    .mx_BaseCard_header {
+        align-items: center;
+    }
+
+    .mx_AIThreadListPanel_header {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-2;
+    }
+
+    .mx_AIThreadListPanel_headerRow {
+        display: flex;
+        align-items: baseline;
+        gap: $spacing-8;
+        flex-wrap: wrap;
+    }
+
+    .mx_AIThreadListPanel_headerTitle {
+        font: var(--cpd-font-body-lg-semibold);
+    }
+
+    .mx_AIThreadListPanel_headerHint {
+        color: var(--cpd-color-text-secondary);
+        font: var(--cpd-font-body-sm-regular);
+    }
+
+    .mx_AIThreadListPanel_headerMeta {
+        color: var(--cpd-color-text-secondary);
+        font: var(--cpd-font-body-sm-regular);
+    }
+
+    .mx_AIThreadListPanel_list {
+        padding: $spacing-8 $spacing-16 $spacing-16;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-12;
+    }
+
+    .mx_AIThreadListPanel_row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-8;
+        border: none;
+        border-radius: 12px;
+        padding: $spacing-12 $spacing-16;
+        text-align: left;
+        background-color: var(--cpd-color-bg-subtle-primary);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        margin-left: $spacing-8;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: -$spacing-8;
+            top: $spacing-12;
+            width: 0;
+            height: 0;
+            border-top: $spacing-4 solid transparent;
+            border-bottom: $spacing-4 solid transparent;
+            border-right: $spacing-8 solid var(--cpd-color-bg-subtle-primary);
+        }
+
+        &:hover {
+            background-color: var(--cpd-color-bg-subtle-secondary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+            &::before {
+                border-right-color: var(--cpd-color-bg-subtle-secondary);
+            }
+        }
+    }
+
+    .mx_AIThreadListPanel_rowHeader {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: $spacing-8;
+    }
+
+    .mx_AIThreadListPanel_topic {
+        font: var(--cpd-font-body-md-semibold);
+        color: var(--cpd-color-text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mx_AIThreadListPanel_count {
+        font: var(--cpd-font-body-sm-medium);
+        color: var(--cpd-color-text-secondary);
+    }
+
+    .mx_AIThreadListPanel_summary {
+        font: var(--cpd-font-body-sm-regular);
+        color: var(--cpd-color-text-secondary);
+    }
+
+    .mx_AIThreadListPanel_rowMeta {
+        font: var(--cpd-font-body-xs-regular);
+        color: var(--cpd-color-text-secondary);
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .mx_AIThreadListPanel_empty {
+        padding: $spacing-16;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-12;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+

@@ -1,0 +1,57 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+.mx_AIThreadsButton_container {
+    display: flex;
+}
+
+.mx_AIThreadsButton {
+    border-radius: 8px;
+    margin: 18px auto auto auto;
+    width: 32px;
+    height: 32px;
+
+    &.expanded {
+        background-color: transparent !important;
+        margin-left: 21px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+
+        & .mx_AIThreadsButton_Icon {
+            margin-right: 14px;
+            min-width: 24px;
+        }
+
+        & .mx_AIThreadsButton_Text {
+            color: $secondary-content;
+        }
+    }
+
+    &:not(.expanded) {
+        &:hover,
+        &:hover .mx_AIThreadsButton_Icon {
+            background-color: $quaternary-content;
+            fill: $primary-content;
+        }
+    }
+
+    & .mx_AIThreadsButton_Icon {
+        fill: $secondary-content;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.mx_AIThreadsButton_Text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

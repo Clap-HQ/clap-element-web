@@ -212,3 +212,40 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 }
+
+.mx_TopicThreadsView {
+    display: flex;
+    flex-direction: column;
+
+    .mx_TopicThreadsView_meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--cpd-space-3x);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--cpd-color-gray-400);
+    }
+
+    .mx_TopicThreadsView_metaDetails {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--cpd-space-2x);
+        font: var(--cpd-font-body-sm-regular);
+        color: var(--cpd-color-text-secondary);
+    }
+
+    .mx_TopicThreadsView_metaButton {
+        white-space: nowrap;
+    }
+
+    .mx_TopicThreadsView_empty {
+        padding: 24px;
+        text-align: center;
+    }
+
+    .mx_TopicThreadsView_emptyActions {
+        margin-top: var(--cpd-space-4x);
+        display: flex;
+        justify-content: center;
+    }
+}

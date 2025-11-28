@@ -78,6 +78,7 @@ describe("<SendMessageComposer/>", () => {
         promptAskToJoin: false,
         viewRoomOpts: { buttons: [] },
         isRoomEncrypted: false,
+        isTopicThreadsViewActive: false,
     };
     describe("createMessageContent", () => {
         it("sends plaintext messages correctly", () => {

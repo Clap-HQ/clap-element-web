@@ -380,4 +380,5 @@ export enum Action {
      * Open the create room dialog
      */
     CreateRoom = "view_create_room",
+
 }

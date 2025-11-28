@@ -3358,7 +3358,27 @@
         "my_threads": "My threads",
         "my_threads_description": "Shows all threads you've participated in",
         "open_thread": "Open thread",
-        "show_thread_filter": "Show:"
+        "show_thread_filter": "Show:",
+        "ai_threads": "AI Threads",
+        "ai_threads_classifying": "Analyzing conversations...",
+        "ai_threads_no_threads": "No AI threads found",
+        "ai_threads_no_threads_description": "No AI threads have been generated yet.",
+        "ai_threads_meta_hint": "AI threads are powered by @clap-assistant.",
+        "ai_threads_empty_help": "Ask @clap-assistant to run \"!ai-threads refresh\" in this room to generate AI threads.",
+        "ai_threads_request_refresh_button": "Insert \"!ai-threads refresh\"",
+        "ai_threads_last_updated": "Last updated %(time)s",
+        "ai_threads_sampled_messages": "Analyzed %(count)s recent messages",
+        "ai_threads_default_topic": "General discussion",
+        "ai_threads_missing_body": "(message unavailable)",
+        "ai_threads_thread_count": {
+            "one": "%(count)s thread",
+            "other": "%(count)s threads"
+        },
+        "ai_thread_open": "Open AI thread with %(count)s related messages",
+        "ai_thread_related_count": {
+            "one": "%(count)s message",
+            "other": "%(count)s messages"
+        }
     },
     "threads_activity_centre": {
         "header": "Threads activity",

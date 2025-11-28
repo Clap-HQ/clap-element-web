@@ -25,6 +25,9 @@ export interface IRightPanelCardState {
     initialEventScrollIntoView?: boolean;
     // room summary
     focusRoomSearch?: boolean;
+    // AI threads
+    aiThreadGroupId?: string;
+    aiThreadRootEventId?: string;
 }
 
 export interface IRightPanelCardStateStored {
@@ -38,6 +41,9 @@ export interface IRightPanelCardStateStored {
     initialEventId?: string;
     isInitialEventHighlighted?: boolean;
     initialEventScrollIntoView?: boolean;
+    // AI threads
+    aiThreadGroupId?: string;
+    aiThreadRootEventId?: string;
 }
 
 export interface IRightPanelCard {
@@ -82,6 +88,8 @@ export function convertCardToStore(panelState: IRightPanelCard): IRightPanelCard
         memberInfoEventId: !!state?.memberInfoEvent?.getId() ? state.memberInfoEvent.getId() : undefined,
         initialEventId: !!state?.initialEvent?.getId() ? state.initialEvent.getId() : undefined,
         memberId: !!state?.member?.userId ? state.member.userId : undefined,
+        aiThreadGroupId: state.aiThreadGroupId,
+        aiThreadRootEventId: state.aiThreadRootEventId,
     };
 
     return { state: stateStored, phase: panelState.phase };
@@ -101,6 +109,8 @@ function convertStoreToCard(panelStateStore: IRightPanelCardStored, room: Room):
             : undefined,
         initialEvent: !!stateStored?.initialEventId ? room.findEventById(stateStored.initialEventId) : undefined,
         member: (!!stateStored?.memberId && room.getMember(stateStored.memberId)) || undefined,
+        aiThreadGroupId: stateStored.aiThreadGroupId,
+        aiThreadRootEventId: stateStored.aiThreadRootEventId,
     };
 
     return { state: state, phase: panelStateStore.phase };
