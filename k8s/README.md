@@ -74,7 +74,17 @@ The deployment uses the following environment variables:
 
 ## Access
 
-After deployment, Element Web is accessible at:
+### Phase 1: EKS Validation (Current)
+
+Element Web on EKS is accessible via temporary domain:
+
+- **Dev**: https://app-eks.dev.clap.ac
+- **Staging**: https://app-eks.staging.clap.ac
+- **Production**: https://app-eks.clap.ac
+
+### Phase 2: After Blue/Green Migration (Future)
+
+Once ECS is fully migrated to EKS:
 
 - **Dev**: https://app.dev.clap.ac
 - **Staging**: https://app.staging.clap.ac
@@ -120,11 +130,35 @@ kubectl rollout undo deployment/element-web -n clap --to-revision=2
 
 ## Blue/Green Migration
 
-During ECS to EKS migration, both deployments will coexist. Traffic is controlled via Route 53 weighted routing:
+During ECS to EKS migration, both deployments will coexist with separate domains:
 
-1. **Initial**: ECS 100%, EKS 0%
-2. **Phase 1**: ECS 90%, EKS 10% (validation)
-3. **Phase 2**: ECS 50%, EKS 50% (load testing)
-4. **Phase 3**: ECS 0%, EKS 100% (complete migration)
+### Current State
 
-Monitor metrics in CloudWatch and Grafana before proceeding to next phase.
+- **ECS**: `app.dev.clap.ac` (production traffic)
+- **EKS**: `app-eks.dev.clap.ac` (validation only)
+
+### Migration Steps
+
+1. **Validation Phase** (Current)
+   - Deploy to EKS with temporary domain `app-eks.dev.clap.ac`
+   - Verify functionality, health checks, and performance
+   - Monitor metrics for 24-48 hours
+
+2. **Route 53 Weighted Routing**
+   - Create weighted routing policy for `app.dev.clap.ac`
+   - Start: ECS 90%, EKS 10%
+   - Monitor error rates and latency
+   - Gradually increase: 50/50, then 10/90
+
+3. **Complete Migration**
+   - Final switch: ECS 0%, EKS 100%
+   - Update Ingress to use `app.dev.clap.ac`
+   - Remove temporary `app-eks.dev.clap.ac`
+   - Decommission ECS resources
+
+### Monitoring
+
+Monitor these metrics in CloudWatch and Grafana before proceeding:
+- HTTP 5xx error rate < 0.1%
+- P95 latency similar to ECS baseline
+- Health check success rate > 99%
