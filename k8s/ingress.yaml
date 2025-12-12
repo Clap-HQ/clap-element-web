@@ -21,7 +21,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: app-eks.ENV.clap.ac
+  - host: app.ENV.clap.ac
     http:
       paths:
       - path: /

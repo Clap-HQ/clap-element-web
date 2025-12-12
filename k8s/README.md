@@ -74,17 +74,7 @@ The deployment uses the following environment variables:
 
 ## Access
 
-### Phase 1: EKS Validation (Current)
-
-Element Web on EKS is accessible via temporary domain:
-
-- **Dev**: https://app-eks.dev.clap.ac
-- **Staging**: https://app-eks.staging.clap.ac
-- **Production**: https://app-eks.clap.ac
-
-### Phase 2: After Blue/Green Migration (Future)
-
-Once ECS is fully migrated to EKS:
+After deployment, Element Web is accessible at:
 
 - **Dev**: https://app.dev.clap.ac
 - **Staging**: https://app.staging.clap.ac
@@ -128,37 +118,33 @@ kubectl rollout undo deployment/element-web -n clap
 kubectl rollout undo deployment/element-web -n clap --to-revision=2
 ```
 
-## Blue/Green Migration
+## ECS to EKS Migration
 
-During ECS to EKS migration, both deployments will coexist with separate domains:
-
-### Current State
-
-- **ECS**: `app.dev.clap.ac` (production traffic)
-- **EKS**: `app-eks.dev.clap.ac` (validation only)
+Migration strategy: Direct cutover (ECS not currently in use)
 
 ### Migration Steps
 
-1. **Validation Phase** (Current)
-   - Deploy to EKS with temporary domain `app-eks.dev.clap.ac`
-   - Verify functionality, health checks, and performance
+1. **Stop ECS Service**
+   - Scale down Element Web ECS service to 0 tasks
+   - Verify no traffic to ECS ALB
+
+2. **Deploy to EKS**
+   - Run GitHub Actions workflow: "Clap - Build and Deploy to EKS"
+   - Wait for ALB provisioning (2-3 minutes)
+   - Verify health checks passing
+
+3. **Update DNS**
+   - Add Cloudflare CNAME: `app.dev.clap.ac` → EKS ALB DNS
+   - Wait for DNS propagation (1-5 minutes)
+
+4. **Verify and Monitor**
+   - Test https://app.dev.clap.ac
    - Monitor metrics for 24-48 hours
+   - Decommission ECS resources after confirmation
 
-2. **Route 53 Weighted Routing**
-   - Create weighted routing policy for `app.dev.clap.ac`
-   - Start: ECS 90%, EKS 10%
-   - Monitor error rates and latency
-   - Gradually increase: 50/50, then 10/90
+### Rollback
 
-3. **Complete Migration**
-   - Final switch: ECS 0%, EKS 100%
-   - Update Ingress to use `app.dev.clap.ac`
-   - Remove temporary `app-eks.dev.clap.ac`
-   - Decommission ECS resources
-
-### Monitoring
-
-Monitor these metrics in CloudWatch and Grafana before proceeding:
-- HTTP 5xx error rate < 0.1%
-- P95 latency similar to ECS baseline
-- Health check success rate > 99%
+If issues occur:
+1. Update Cloudflare CNAME back to ECS ALB
+2. Scale ECS service back to desired count
+3. Investigate EKS issues
