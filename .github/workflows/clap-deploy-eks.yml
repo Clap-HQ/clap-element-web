@@ -160,7 +160,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Waiting for ALB to be provisioned (this may take 2-3 minutes)..." >> $GITHUB_STEP_SUMMARY
 
-          # Wait for ALB to be ready
+          # Wait for ALB to be ready (max 5 minutes)
+          ALB_URL=""
           for i in {1..60}; do
             ALB_URL=$(kubectl get ingress element-web -n ${{ env.K8S_NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
             if [ -n "$ALB_URL" ]; then
@@ -172,8 +173,24 @@ jobs:
             sleep 5
           done
 
+          # Fail if ALB was not provisioned
+          if [ -z "$ALB_URL" ]; then
+            echo "## ❌ ALB Provisioning Timeout" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ALB was not provisioned after 5 minutes. This may indicate:" >> $GITHUB_STEP_SUMMARY
+            echo "- AWS Load Balancer Controller not running" >> $GITHUB_STEP_SUMMARY
+            echo "- IAM permissions issue" >> $GITHUB_STEP_SUMMARY
+            echo "- Subnet tagging issue" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Ingress Status:**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            kubectl describe ingress element-web -n ${{ env.K8S_NAMESPACE }} >> $GITHUB_STEP_SUMMARY || echo "Failed to get ingress details"
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          kubectl get ingress element-web -n ${{ env.K8S_NAMESPACE }} >> $GITHUB_STEP_SUMMARY || echo "Ingress not ready yet"
+          kubectl get ingress element-web -n ${{ env.K8S_NAMESPACE }} >> $GITHUB_STEP_SUMMARY
 
       - name: Deployment summary
         run: |
