@@ -18,8 +18,8 @@ RUN /src/scripts/docker-package.sh
 # Copy the Clap config now so that we don't create another layer in the app image
 RUN cp /src/config.clap.json /src/webapp/config.json
 
-# App
-FROM nginxinc/nginx-unprivileged:alpine-slim@sha256:13d1e0acc26b7ce8a40d155473759387e04d1433e73726d4bb49c67bdb197fe5
+# App - Multi-platform support (amd64/arm64)
+FROM --platform=$TARGETPLATFORM nginxinc/nginx-unprivileged:alpine-slim
 
 # Need root user to install packages & manipulate the usr directory
 USER root
