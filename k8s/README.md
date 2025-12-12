@@ -24,7 +24,9 @@ The workflow will:
 1. Build and push Docker image to ECR
 2. Update EKS deployment with new image
 3. Wait for rollout to complete
-4. Provision ALB and configure DNS
+4. Provision ALB via AWS Load Balancer Controller
+
+**Note**: DNS configuration (Route 53/Cloudflare) is a separate step and requires manual action or additional automation after ALB is provisioned.
 
 ### Manual Deployment
 
@@ -76,9 +78,9 @@ The deployment uses the following environment variables:
 
 After deployment, Element Web is accessible at:
 
-- **Dev**: https://app.dev.clap.ac
-- **Staging**: https://app.staging.clap.ac
-- **Production**: https://app.clap.ac
+- **Dev**: [app.dev.clap.ac](https://app.dev.clap.ac)
+- **Staging**: [app.staging.clap.ac](https://app.staging.clap.ac)
+- **Production**: [app.clap.ac](https://app.clap.ac)
 
 ## Troubleshooting
 
@@ -120,9 +122,9 @@ kubectl rollout undo deployment/element-web -n clap --to-revision=2
 
 ## ECS to EKS Migration
 
-Migration strategy: Direct cutover (ECS not currently in use)
+Migration strategy depends on current environment:
 
-### Migration Steps
+### Option A: Direct Cutover (if ECS not currently in use)
 
 1. **Stop ECS Service**
    - Scale down Element Web ECS service to 0 tasks
@@ -134,17 +136,49 @@ Migration strategy: Direct cutover (ECS not currently in use)
    - Verify health checks passing
 
 3. **Update DNS**
-   - Add Cloudflare CNAME: `app.dev.clap.ac` → EKS ALB DNS
+   - Add Cloudflare/Route 53 record: `app.dev.clap.ac` → EKS ALB DNS
    - Wait for DNS propagation (1-5 minutes)
 
 4. **Verify and Monitor**
-   - Test https://app.dev.clap.ac
+   - Test application accessibility
    - Monitor metrics for 24-48 hours
    - Decommission ECS resources after confirmation
 
-### Rollback
+**Rollback**: Update DNS back to ECS ALB, scale ECS service back to desired count
 
-If issues occur:
-1. Update Cloudflare CNAME back to ECS ALB
-2. Scale ECS service back to desired count
-3. Investigate EKS issues
+### Option B: Blue/Green with Weighted Routing (if ECS in production)
+
+1. **Deploy EKS (Green)**
+   - Deploy to EKS without changing DNS
+   - Verify EKS ALB and health checks
+   - ECS (Blue) continues serving production traffic
+
+2. **Configure Weighted Routing (Route 53)**
+   - Create weighted routing policy for domain
+   - Start: ECS 90%, EKS 10%
+   - Monitor error rates, latency, and logs
+
+3. **Progressive Traffic Shift**
+   - After 1 hour: ECS 50%, EKS 50%
+   - Monitor metrics and error rates
+   - After 2 hours: ECS 10%, EKS 90%
+   - Continue monitoring
+
+4. **Complete Migration**
+   - Final: ECS 0%, EKS 100%
+   - Remove weighted policy, point directly to EKS ALB
+   - Monitor for 24-48 hours
+
+5. **Cleanup**
+   - Scale ECS service to 0
+   - Decommission ECS resources after confirmation
+
+**Rollback at any stage**:
+- Immediately shift weight back to ECS (e.g., ECS 100%, EKS 0%)
+- Monitor recovery
+- Investigate and fix EKS issues before retry
+
+**Monitoring Metrics**:
+- HTTP 5xx error rate < 0.1%
+- P95 latency similar to ECS baseline
+- Health check success rate > 99%

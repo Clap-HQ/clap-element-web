@@ -15,13 +15,13 @@ metadata:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:619888520513:certificate/a4c13ef6-d1eb-46e6-994e-beb727d205ea
+    alb.ingress.kubernetes.io/certificate-arn: CERTIFICATE_ARN
     alb.ingress.kubernetes.io/group.name: clap-eks-ENV
     alb.ingress.kubernetes.io/tags: Environment=ENV,Project=clap,Service=element-web,ManagedBy=kubernetes
 spec:
   ingressClassName: alb
   rules:
-  - host: app.ENV.clap.ac
+  - host: DOMAIN_NAME
     http:
       paths:
       - path: /
