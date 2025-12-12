@@ -81,6 +81,14 @@ export default class MainSplit extends React.Component<IProps> {
     };
 
     private loadSidePanelSize(): { height: string | number; width: number } {
+        // For markdown panel, always use defaultSize to ensure adequate space
+        if (this.props.sizeKey === "markdown") {
+            return {
+                height: "100%",
+                width: this.props.defaultSize,
+            };
+        }
+
         let rhsSize = parseInt(window.localStorage.getItem(this.sizeSettingStorageKey)!, 10);
 
         if (isNaN(rhsSize)) {

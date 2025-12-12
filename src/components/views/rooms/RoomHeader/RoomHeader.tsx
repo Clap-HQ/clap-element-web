@@ -14,6 +14,7 @@ import CloseCallIcon from "@vector-im/compound-design-tokens/assets/web/icons/cl
 import ThreadsIcon from "@vector-im/compound-design-tokens/assets/web/icons/threads-solid";
 import RoomInfoIcon from "@vector-im/compound-design-tokens/assets/web/icons/info-solid";
 import NotificationsIcon from "@vector-im/compound-design-tokens/assets/web/icons/notifications-solid";
+import DocumentIcon from "@vector-im/compound-design-tokens/assets/web/icons/pin-solid";
 import VerifiedIcon from "@vector-im/compound-design-tokens/assets/web/icons/verified";
 import ErrorIcon from "@vector-im/compound-design-tokens/assets/web/icons/error-solid";
 import PublicIcon from "@vector-im/compound-design-tokens/assets/web/icons/public";
@@ -364,6 +365,19 @@ export default function RoomHeader({
                             <ToggleableIcon Icon={ThreadsIcon} phase={RightPanelPhases.ThreadPanel} />
                         </IconButton>
                     </Tooltip>
+
+                    <Tooltip label={_t("room|header_markdown")}>
+                        <IconButton
+                            onClick={(evt) => {
+                                evt.stopPropagation();
+                                RightPanelStore.instance.showOrHidePhase(RightPanelPhases.MarkdownPanel);
+                            }}
+                            aria-label={_t("room|header_markdown")}
+                        >
+                            <ToggleableIcon Icon={DocumentIcon} phase={RightPanelPhases.MarkdownPanel} />
+                        </IconButton>
+                    </Tooltip>
+
                     {notificationsEnabled && (
                         <Tooltip label={_t("notifications|enable_prompt_toast_title")}>
                             <IconButton
