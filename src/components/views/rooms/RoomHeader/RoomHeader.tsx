@@ -23,6 +23,7 @@ import { type ViewRoomOpts } from "@matrix-org/react-sdk-module-api/lib/lifecycl
 import { useRoomName } from "../../../../hooks/useRoomName.ts";
 import { RightPanelPhases } from "../../../../stores/right-panel/RightPanelStorePhases.ts";
 import { useMatrixClientContext } from "../../../../contexts/MatrixClientContext.tsx";
+import { Action } from "../../../../dispatcher/actions.ts";
 import { useRoomMemberCount, useRoomMembers } from "../../../../hooks/useRoomMembers.ts";
 import { _t } from "../../../../languageHandler.tsx";
 import { Flex } from "../../../../../packages/shared-components/src/utils/Flex";

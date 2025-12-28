@@ -2604,6 +2604,7 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
                         {previewBar}
                     </>
                 );
+                break;
             }
         }
         const mainSplitContentClasses = classNames("mx_RoomView_body", mainSplitContentClassName);

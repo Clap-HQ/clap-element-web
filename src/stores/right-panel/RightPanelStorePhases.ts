@@ -28,6 +28,10 @@ export enum RightPanelPhases {
     // Thread stuff
     ThreadView = "ThreadView",
     ThreadPanel = "ThreadPanel",
+
+    // AI Thread stuff
+    AIThreadList = "AIThreadList",
+    AIThreadPanel = "AIThreadPanel",
 }
 
 export function backLabelForPhase(phase: RightPanelPhases | null): string | null {
@@ -42,6 +46,8 @@ export function backLabelForPhase(phase: RightPanelPhases | null): string | null
             return _t("member_list_back_action_label");
         case RightPanelPhases.ThreadView:
             return _t("thread_view_back_action_label");
+        case RightPanelPhases.AIThreadPanel:
+            return _t("threads|ai_threads");
     }
     return null;
 }

@@ -22,6 +22,8 @@ import ThirdPartyMemberInfo from "../views/rooms/ThirdPartyMemberInfo";
 import FilePanel from "./FilePanel";
 import ThreadView from "./ThreadView";
 import ThreadPanel from "./ThreadPanel";
+import AIThreadPanel from "./AIThreadPanel";
+import AIThreadListPanel from "./AIThreadListPanel";
 import NotificationPanel from "./NotificationPanel";
 import type ResizeNotifier from "../../utils/ResizeNotifier";
 import { PinnedMessagesCard } from "../views/right_panel/PinnedMessagesCard";
@@ -251,6 +253,27 @@ export default class RightPanel extends React.Component<Props, IState> {
                     card = (
                         <ThreadPanel
                             roomId={this.props.room.roomId}
+                            resizeNotifier={this.props.resizeNotifier}
+                            onClose={this.onClose}
+                            permalinkCreator={this.props.permalinkCreator}
+                        />
+                    );
+                }
+                break;
+
+            case RightPanelPhases.AIThreadList:
+                if (!!this.props.room) {
+                    card = <AIThreadListPanel room={this.props.room} onClose={this.onClose} />;
+                }
+                break;
+
+            case RightPanelPhases.AIThreadPanel:
+                if (!!this.props.room && !!cardState?.aiThreadGroupId && !!cardState?.aiThreadRootEventId) {
+                    card = (
+                        <AIThreadPanel
+                            room={this.props.room}
+                            groupId={cardState.aiThreadGroupId}
+                            rootEventId={cardState.aiThreadRootEventId}
                             resizeNotifier={this.props.resizeNotifier}
                             onClose={this.onClose}
                             permalinkCreator={this.props.permalinkCreator}
