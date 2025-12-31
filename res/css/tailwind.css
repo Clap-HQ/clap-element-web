@@ -1,0 +1,61 @@
+/*
+ * Tailwind CSS v4
+ * 기존 레거시 스타일(.pcss)과 공존하며 신규 컴포넌트 개발에 사용
+ *
+ * 사용 가이드: docs/tailwind-css.md 참조
+ * 사용법: 신규 컴포넌트에서 className="flex items-center gap-2" 형태로 사용
+ */
+
+/* 소스 파일 감지 - Hot reload를 위해 필수 */
+@source "../../src/**/*.{js,ts,jsx,tsx}";
+@source "../**/*.html";
+
+@layer theme, base, components, utilities;
+
+/* Theme: Tailwind 테마 변수 (colors, spacing, fonts 등) */
+@import "tailwindcss/theme.css" layer(theme);
+
+/* Preflight(base reset) - 브라우저 기본 스타일 리셋 */
+@import "tailwindcss/preflight.css" layer(base);
+
+/* Utilities: Tailwind 유틸리티 클래스 (flex, p-4, text-blue-500 등) */
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* shadcn/ui 테마 변수 - Clap 브랜드 컬러 */
+@theme {
+    /* Primary - Clap 브랜드 블루 */
+    --color-primary: #26231e;
+    --color-primary-foreground: #ffffff;
+
+    /* Secondary */
+    --color-secondary: #f4f4f5;
+    --color-secondary-foreground: #18181b;
+
+    /* Destructive */
+    --color-destructive: #ef4444;
+    --color-destructive-foreground: #ffffff;
+
+    /* Background & Foreground */
+    --color-background: #ffffff;
+    --color-foreground: #09090b;
+
+    /* Muted */
+    --color-muted: #f4f4f5;
+    --color-muted-foreground: #71717a;
+
+    /* Accent */
+    --color-accent: #f4f4f5;
+    --color-accent-foreground: #18181b;
+
+    /* Border & Input */
+    --color-border: #e4e4e7;
+    --color-input: #e4e4e7;
+
+    /* Ring (focus ring) */
+    --color-ring: #26231e;
+
+    /* Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+}

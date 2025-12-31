@@ -7,34 +7,34 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { type JSX, type ReactElement } from "react";
+import React, { type ReactElement } from "react";
 
-import SdkConfig from "../../../SdkConfig";
-import { _t } from "../../../languageHandler";
+import LanguageSelector from "./LanguageSelector";
 
-const AuthFooter = (): ReactElement => {
-    const brandingConfig = SdkConfig.getObject("branding");
-    const links = brandingConfig?.get("auth_footer_links") ?? [
-        { text: "Blog", url: "https://element.io/blog" },
-        { text: "Mastodon", url: "https://mastodon.matrix.org/@Element" },
-        { text: "GitHub", url: "https://github.com/element-hq/element-web" },
-    ];
+interface Props {
+    disableLanguageSelector?: boolean;
+}
 
-    const authFooterLinks: JSX.Element[] = [];
-    for (const linkEntry of links) {
-        authFooterLinks.push(
-            <a href={linkEntry.url} key={linkEntry.text} target="_blank" rel="noreferrer noopener">
-                {linkEntry.text}
-            </a>,
-        );
-    }
-
+const AuthFooter = ({ disableLanguageSelector }: Props): ReactElement => {
     return (
-        <footer className="mx_AuthFooter" role="contentinfo">
-            {authFooterLinks}
-            <a href="https://matrix.org" target="_blank" rel="noreferrer noopener">
-                {_t("powered_by_matrix")}
+        <footer
+            className="relative flex w-full items-center justify-center py-5 text-center"
+            style={{ font: "var(--cpd-font-body-md-regular)" }}
+            role="contentinfo"
+        >
+            <a
+                href="https://nextkakao.com"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="mx-[22px] text-[#2e2f32]!"
+            >
+                Team
             </a>
+            <div className="absolute right-10">
+                <div className="py-0">
+                    <LanguageSelector disabled={disableLanguageSelector} />
+                </div>
+            </div>
         </footer>
     );
 };
