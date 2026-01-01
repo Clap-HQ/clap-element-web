@@ -1437,36 +1437,33 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                         "onBlur": () => this.setState({ focusWithin: false }),
                     },
                     <>
-                        {ircTimestamp}
-                        {sender}
-                        {ircPadlock}
-                        {avatar}
-                        <div
-                            id={this.id}
-                            className={lineClasses}
-                            key="mx_EventTile_line"
-                            onContextMenu={this.onContextMenu}
-                        >
-                            {this.renderContextMenu()}
-                            {groupTimestamp}
-                            {groupPadlock}
-                            {replyChain}
-                            {renderTile(this.context.timelineRenderingType, {
-                                ...this.props,
-
-                                // overrides
-                                ref: this.tile,
-                                isSeeingThroughMessageHiddenForModeration,
-
-                                // appease TS
-                                highlights: this.props.highlights,
-                                highlightLink: this.props.highlightLink,
-                                permalinkCreator: this.props.permalinkCreator,
-                                showHiddenEvents: this.context.showHiddenEvents,
-                            })}
-                            {actionBar}
-                            {this.props.layout === Layout.IRC && (
-                                <>
+                        {this.props.layout === Layout.IRC ? (
+                            <>
+                                {/* IRC 레이아웃: 기존 구조 유지 */}
+                                {ircTimestamp}
+                                {sender}
+                                {ircPadlock}
+                                {avatar}
+                                <div
+                                    id={this.id}
+                                    className={lineClasses}
+                                    key="mx_EventTile_line"
+                                    onContextMenu={this.onContextMenu}
+                                >
+                                    {this.renderContextMenu()}
+                                    {groupTimestamp}
+                                    {groupPadlock}
+                                    {replyChain}
+                                    {renderTile(this.context.timelineRenderingType, {
+                                        ...this.props,
+                                        ref: this.tile,
+                                        isSeeingThroughMessageHiddenForModeration,
+                                        highlights: this.props.highlights,
+                                        highlightLink: this.props.highlightLink,
+                                        permalinkCreator: this.props.permalinkCreator,
+                                        showHiddenEvents: this.context.showHiddenEvents,
+                                    })}
+                                    {actionBar}
                                     {hasFooter && (
                                         <div className="mx_EventTile_footer">
                                             {pinnedMessageBadge}
@@ -1474,22 +1471,48 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                         </div>
                                     )}
                                     {this.renderThreadInfo()}
-                                </>
-                            )}
-                        </div>
-                        {this.props.layout !== Layout.IRC && (
+                                </div>
+                                {msgOption}
+                            </>
+                        ) : (
                             <>
-                                {hasFooter && (
-                                    <div className="mx_EventTile_footer">
-                                        {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
-                                        {reactionsRow}
-                                        {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
+                                {/* Group/Bubble 레이아웃: Flexbox 구조 */}
+                                {avatar}
+                                <div className="mx_EventTile_content_wrapper">
+                                    {sender}
+                                    <div
+                                        id={this.id}
+                                        className={lineClasses}
+                                        key="mx_EventTile_line"
+                                        onContextMenu={this.onContextMenu}
+                                    >
+                                        {this.renderContextMenu()}
+                                        {groupTimestamp}
+                                        {groupPadlock}
+                                        {replyChain}
+                                        {renderTile(this.context.timelineRenderingType, {
+                                            ...this.props,
+                                            ref: this.tile,
+                                            isSeeingThroughMessageHiddenForModeration,
+                                            highlights: this.props.highlights,
+                                            highlightLink: this.props.highlightLink,
+                                            permalinkCreator: this.props.permalinkCreator,
+                                            showHiddenEvents: this.context.showHiddenEvents,
+                                        })}
+                                        {actionBar}
                                     </div>
-                                )}
-                                {this.renderThreadInfo()}
+                                    {hasFooter && (
+                                        <div className="mx_EventTile_footer">
+                                            {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
+                                            {reactionsRow}
+                                            {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
+                                        </div>
+                                    )}
+                                    {this.renderThreadInfo()}
+                                </div>
+                                {msgOption}
                             </>
                         )}
-                        {msgOption}
                     </>,
                 );
             }
