@@ -112,8 +112,8 @@ export class ElementWidget extends Widget {
             theme = customTheme.is_dark ? "dark" : "light";
         }
 
-        // only allow light/dark through, defaulting to dark as that was previously the only state
-        // accounts for legacy-light/legacy-dark themes too
+        // Normalize all theme variants to light/dark for widget compatibility
+        // Jitsi and other widgets only understand "light" or "dark"
         if (theme.includes("light")) {
             theme = "light";
         } else {

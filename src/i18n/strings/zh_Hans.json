@@ -2504,7 +2504,6 @@
         "tos": "服务协议"
     },
     "theme": {
-        "light_high_contrast": "浅色高对比",
         "match_system": "匹配系统"
     },
     "thread_view_back_action_label": "返回消息列",

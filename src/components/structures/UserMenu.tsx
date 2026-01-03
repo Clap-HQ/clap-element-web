@@ -21,7 +21,7 @@ import FeedbackDialog from "../views/dialogs/FeedbackDialog";
 import Modal from "../../Modal";
 import LogoutDialog, { shouldShowLogoutDialog } from "../views/dialogs/LogoutDialog";
 import SettingsStore from "../../settings/SettingsStore";
-import { findHighContrastTheme, getCustomTheme, isHighContrastTheme } from "../../theme";
+import { getCustomTheme } from "../../theme";
 import { RovingAccessibleButton } from "../../accessibility/RovingTabIndex";
 import AccessibleButton, { type ButtonEvent } from "../views/elements/AccessibleButton";
 import SdkConfig from "../../SdkConfig";
@@ -54,7 +54,6 @@ type PartialDOMRect = Pick<DOMRect, "width" | "left" | "top" | "height">;
 interface IState {
     contextMenuPosition: PartialDOMRect | null;
     isDarkTheme: boolean;
-    isHighContrast: boolean;
     selectedSpace?: Room | null;
 }
 
@@ -89,7 +88,6 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.state = {
             contextMenuPosition: null,
             isDarkTheme: this.isUserOnDarkTheme(),
-            isHighContrast: this.isUserOnHighContrastTheme(),
             selectedSpace: SpaceStore.instance.activeSpaceRoom,
         };
     }
@@ -125,18 +123,6 @@ export default class UserMenu extends React.Component<IProps, IState> {
         }
     }
 
-    private isUserOnHighContrastTheme(): boolean {
-        if (SettingsStore.getValue("use_system_theme")) {
-            return window.matchMedia("(prefers-contrast: more)").matches;
-        } else {
-            const theme = SettingsStore.getValue("theme");
-            if (theme.startsWith("custom-")) {
-                return false;
-            }
-            return isHighContrastTheme(theme);
-        }
-    }
-
     private onProfileUpdate = async (): Promise<void> => {
         // the store triggered an update, so force a layout update. We don't
         // have any state to store here for that to magically happen.
@@ -152,7 +138,6 @@ export default class UserMenu extends React.Component<IProps, IState> {
     private onThemeChanged = (): void => {
         this.setState({
             isDarkTheme: this.isUserOnDarkTheme(),
-            isHighContrast: this.isUserOnHighContrastTheme(),
         });
     };
 
@@ -200,13 +185,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         // Disable system theme matching if the user hits this button
         SettingsStore.setValue("use_system_theme", null, SettingLevel.DEVICE, false);
 
-        let newTheme = this.state.isDarkTheme ? "light" : "dark";
-        if (this.state.isHighContrast) {
-            const hcTheme = findHighContrastTheme(newTheme);
-            if (hcTheme) {
-                newTheme = hcTheme;
-            }
-        }
+        const newTheme = this.state.isDarkTheme ? "light" : "dark";
         SettingsStore.setValue("theme", null, SettingLevel.DEVICE, newTheme); // set at same level as Appearance tab
     };
 

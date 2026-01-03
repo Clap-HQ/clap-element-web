@@ -28,9 +28,6 @@ import SettingsStore from "./settings/SettingsStore";
 import ThemeWatcher from "./settings/watchers/ThemeWatcher";
 
 export const DEFAULT_THEME = "light";
-const HIGH_CONTRAST_THEMES: Record<string, string> = {
-    light: "light-high-contrast",
-};
 
 interface IFontFaces extends Omit<Record<(typeof allowedFontFaceProps)[number], string>, "src"> {
     src: {
@@ -58,37 +55,9 @@ export type CustomTheme = {
     compound?: CompoundTheme;
 };
 
-/**
- * Given a non-high-contrast theme, find the corresponding high-contrast one
- * if it exists, or return undefined if not.
- */
-export function findHighContrastTheme(theme: string): string | undefined {
-    return HIGH_CONTRAST_THEMES[theme];
-}
-
-/**
- * Given a high-contrast theme, find the corresponding non-high-contrast one
- * if it exists, or return undefined if not.
- */
-export function findNonHighContrastTheme(hcTheme: string): string | undefined {
-    for (const theme in HIGH_CONTRAST_THEMES) {
-        if (HIGH_CONTRAST_THEMES[theme] === hcTheme) {
-            return theme;
-        }
-    }
-}
-
-/**
- * Decide whether the supplied theme is high contrast.
- */
-export function isHighContrastTheme(theme: string): boolean {
-    return Object.values(HIGH_CONTRAST_THEMES).includes(theme);
-}
-
 export function enumerateThemes(): { [key: string]: string } {
     const BUILTIN_THEMES = {
         "light": _t("common|light"),
-        "light-high-contrast": _t("theme|light_high_contrast"),
         "dark": _t("common|dark"),
     };
     const customThemes = SettingsStore.getValue("custom_themes") || [];
@@ -115,8 +84,7 @@ export interface ITheme {
 
 export function getOrderedThemes(): ITheme[] {
     const themes = Object.entries(enumerateThemes())
-        .map((p) => ({ id: p[0], name: p[1] })) // convert pairs to objects for code readability
-        .filter((p) => !isHighContrastTheme(p.id));
+        .map((p) => ({ id: p[0], name: p[1] })); // convert pairs to objects for code readability
     const builtInThemes = themes.filter((p) => !p.id.startsWith("custom-"));
     const collator = new Intl.Collator();
     const customThemes = themes
@@ -352,16 +320,11 @@ export async function setTheme(theme?: string): Promise<void> {
 
     /**
      * Adds the Compound theme class to the top-most element in the document
-     * This will automatically refresh the colour scales based on the OS or user
-     * preferences
+     * This will automatically refresh the colour scales based on the theme
      */
-    document.body.classList.remove("cpd-theme-light", "cpd-theme-dark", "cpd-theme-light-hc", "cpd-theme-dark-hc");
+    document.body.classList.remove("cpd-theme-light", "cpd-theme-dark");
 
-    let compoundThemeClassName = `cpd-theme-` + (stylesheetName.includes("light") ? "light" : "dark");
-    // Always respect user OS preference!
-    if (isHighContrastTheme(theme) || window.matchMedia("(prefers-contrast: more)").matches) {
-        compoundThemeClassName += "-hc";
-    }
+    const compoundThemeClassName = `cpd-theme-` + (stylesheetName.includes("light") ? "light" : "dark");
 
     document.body.classList.add(compoundThemeClassName);
 

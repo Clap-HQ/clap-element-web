@@ -2587,7 +2587,6 @@
         "tos": "Términos de servicio"
     },
     "theme": {
-        "light_high_contrast": "Claro con contraste alto",
         "match_system": "Usar el del sistema"
     },
     "thread_view_back_action_label": "Volver al hilo",
