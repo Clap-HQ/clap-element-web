@@ -642,6 +642,8 @@ $left-gutter: 64px;
             tile of the section */
             margin-bottom: calc(var(--gutterSize) / 2);
             margin-right: 60px;
+            padding-top: 2px;
+            padding-bottom: 2px;
         }
     }
 }
@@ -1343,10 +1345,6 @@ $left-gutter: 64px;
 
             &[data-self="true"] {
                 align-items: flex-end;
-
-                .mx_EventTile_line.mx_EventTile_mediaLine {
-                    margin: 0 var(--EventTile_bubble_line-margin-inline-end) 0 0; /* align with normal messages */
-                }
             }
         }
     }
