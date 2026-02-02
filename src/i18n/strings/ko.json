@@ -2047,7 +2047,14 @@
         },
         "video_room_chat": {
             "title": "채팅"
+        },
+        "clapbot_chat": {
+            "title": "AI 어시스턴트",
+            "loading": "AI 채팅을 불러오는 중..."
         }
+    },
+    "room_header": {
+        "ai_button": "AI"
     },
     "room": {
         "3pid_invite_email_not_found_account": "이 초대는 계정과 연결되지 않은 %(email)s로 전송되었습니다",

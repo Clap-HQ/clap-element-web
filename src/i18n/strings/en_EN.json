@@ -1955,7 +1955,14 @@
         },
         "video_room_chat": {
             "title": "Chat"
+        },
+        "clapbot_chat": {
+            "title": "AI Assistant",
+            "loading": "Loading AI chat..."
         }
+    },
+    "room_header": {
+        "ai_button": "AI"
     },
     "room": {
         "3pid_invite_email_not_found_account": "This invite was sent to %(email)s which is not associated with your account",

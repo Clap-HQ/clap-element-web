@@ -54,6 +54,7 @@ import { useScopedRoomContext } from "../../../../contexts/ScopedRoomContext.tsx
 import { ToggleableIcon } from "./toggle/ToggleableIcon.tsx";
 import { CurrentRightPanelPhaseContextProvider } from "../../../../contexts/CurrentRightPanelPhaseContext.tsx";
 import { LocalRoom } from "../../../../models/LocalRoom.ts";
+import { ClapbotChatButton } from "./ClapbotChatButton.tsx";
 
 function RoomHeaderButtons({
     room,
@@ -353,6 +354,8 @@ function RoomHeaderButtons({
                     <ToggleableIcon Icon={RoomInfoIcon} phase={RightPanelPhases.RoomSummary} />
                 </IconButton>
             </Tooltip>
+
+            <ClapbotChatButton />
 
             {!isDirectMessage && (
                 <Text as="div" size="sm" weight="medium">
