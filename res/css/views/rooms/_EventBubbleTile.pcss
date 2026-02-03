@@ -54,9 +54,7 @@ Please see LICENSE files in the repository root for full details.
         line-height: 0;
         border: 4px solid $background;
         border-radius: 50%;
-        position: absolute;
-        top: 6px;
-        z-index: 9;
+        /* position: absolute 제거 - flexbox로 변경됨 (_EventTile.pcss 참조) */
         img {
             box-shadow: 0 0 0 3px $background;
             border-radius: 50%;
@@ -178,6 +176,7 @@ Please see LICENSE files in the repository root for full details.
     }
 
     &[data-self="false"] {
+        /* 다른 사용자 메시지: 왼쪽 정렬 (기본 flex-direction: row) */
         .mx_EventTile_line {
             border-bottom-right-radius: var(--cornerRadius);
 
@@ -189,10 +188,6 @@ Please see LICENSE files in the repository root for full details.
             .mx_MBeaconBody {
                 border-bottom-right-radius: var(--cornerRadius) !important;
             }
-        }
-
-        .mx_EventTile_avatar {
-            left: -36px;
         }
 
         .mx_MessageActionBar {
@@ -214,6 +209,9 @@ Please see LICENSE files in the repository root for full details.
     }
 
     &[data-self="true"] {
+        /* 내 메시지: 오른쪽 정렬 - flexbox 방향 반전 */
+        flex-direction: row-reverse;
+
         .mx_EventTile_line {
             margin-inline-start: auto;
             border-bottom-left-radius: var(--cornerRadius);
@@ -257,11 +255,6 @@ Please see LICENSE files in the repository root for full details.
             > :last-child {
                 order: -1; /* Moving the "add reaction button" before the reactions */
             }
-        }
-
-        .mx_EventTile_avatar {
-            top: -19px; /* height of the sender block */
-            right: -38px;
         }
 
         .mx_MediaBody {
@@ -370,16 +363,23 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 
-    &.mx_EventTile_continuation[data-self="false"] .mx_EventTile_line {
-        border-top-left-radius: 0;
+    &.mx_EventTile_continuation[data-self="false"] {
+        /* Avatar가 없으므로 content_wrapper에 왼쪽 여백 추가 */
+        .mx_EventTile_content_wrapper {
+            margin-left: calc(var(--avatarSize) + $spacing-8); /* avatar width + gap */
+        }
 
-        .mx_MImageBody .mx_MImageBody_thumbnail_container,
-        .mx_MVideoBody .mx_MVideoBody_container,
-        .mx_MImageBody::before,
-        .mx_MediaBody,
-        .mx_MLocationBody_map,
-        .mx_MBeaconBody {
+        .mx_EventTile_line {
             border-top-left-radius: 0;
+
+            .mx_MImageBody .mx_MImageBody_thumbnail_container,
+            .mx_MVideoBody .mx_MVideoBody_container,
+            .mx_MImageBody::before,
+            .mx_MediaBody,
+            .mx_MLocationBody_map,
+            .mx_MBeaconBody {
+                border-top-left-radius: 0;
+            }
         }
     }
     &.mx_EventTile_lastInSection[data-self="false"] .mx_EventTile_line {
@@ -395,16 +395,23 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 
-    &.mx_EventTile_continuation[data-self="true"] .mx_EventTile_line {
-        border-top-right-radius: 0;
+    &.mx_EventTile_continuation[data-self="true"] {
+        /* Avatar가 없으므로 content_wrapper에 오른쪽 여백 추가 */
+        .mx_EventTile_content_wrapper {
+            margin-right: calc(var(--avatarSize) + $spacing-8); /* avatar width + gap */
+        }
 
-        .mx_MImageBody .mx_MImageBody_thumbnail_container,
-        .mx_MVideoBody .mx_MVideoBody_container,
-        .mx_MImageBody::before,
-        .mx_MediaBody,
-        .mx_MLocationBody_map,
-        .mx_MBeaconBody {
+        .mx_EventTile_line {
             border-top-right-radius: 0;
+
+            .mx_MImageBody .mx_MImageBody_thumbnail_container,
+            .mx_MVideoBody .mx_MVideoBody_container,
+            .mx_MImageBody::before,
+            .mx_MediaBody,
+            .mx_MLocationBody_map,
+            .mx_MBeaconBody {
+                border-top-right-radius: 0;
+            }
         }
     }
     &.mx_EventTile_lastInSection[data-self="true"] .mx_EventTile_line {
@@ -420,11 +427,7 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 
-    &.mx_EventTile_noSender {
-        .mx_EventTile_avatar {
-            top: -19px;
-        }
-    }
+    /* mx_EventTile_noSender: position: absolute 제거됨 - flexbox 사용 */
 
     &[data-has-reply="true"] {
         > .mx_EventTile_line {

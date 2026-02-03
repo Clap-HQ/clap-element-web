@@ -1955,7 +1955,16 @@
         },
         "video_room_chat": {
             "title": "Chat"
+        },
+        "clapai_chat": {
+            "title": "AI Assistant",
+            "loading": "Loading AI chat...",
+            "confirm_description": "Would you like to start a conversation with Clap AI?",
+            "confirm_button": "Start conversation"
         }
+    },
+    "room_header": {
+        "ai_button": "AI"
     },
     "room": {
         "3pid_invite_email_not_found_account": "This invite was sent to %(email)s which is not associated with your account",
@@ -3379,7 +3388,6 @@
         "tos": "Terms of Service"
     },
     "theme": {
-        "light_high_contrast": "Light high contrast",
         "match_system": "Match system"
     },
     "thread_view_back_action_label": "Back to thread",

@@ -105,16 +105,6 @@ describe("ThemeWatcher", function () {
         expect(themeWatcher.getEffectiveTheme()).toBe("light");
     });
 
-    it("should choose a light-high-contrast theme if that is selected", () => {
-        // Given system settings say dark and theme set to light-high-contrast
-        global.matchMedia = makeMatchMedia({ "(prefers-color-scheme: dark)": true });
-        SettingsStore.getValueAt = makeGetValueAt({ theme: "light-high-contrast" });
-
-        // Then getEffectiveTheme returns light-high-contrast
-        const themeWatcher = new ThemeWatcher();
-        expect(themeWatcher.getEffectiveTheme()).toBe("light-high-contrast");
-    });
-
     it("should choose a light theme if system prefers it (via default)", () => {
         // Given system prefers lightness, even though we did not
         // click "Use system theme" or choose a theme explicitly
@@ -161,23 +151,8 @@ describe("ThemeWatcher", function () {
         expect(themeWatcher.getEffectiveTheme()).toBe("dark");
     });
 
-    it("should choose a high-contrast theme if system prefers it", () => {
-        // Given system prefers high contrast and light
-        global.matchMedia = makeMatchMedia({
-            "(prefers-contrast: more)": true,
-            "(prefers-color-scheme: light)": true,
-        });
-        SettingsStore.getValueAt = makeGetValueAt({ use_system_theme: true });
-        SettingsStore.getValue = makeGetValue({ use_system_theme: true });
-
-        // Then getEffectiveTheme returns light-high-contrast
-        const themeWatcher = new ThemeWatcher();
-        expect(themeWatcher.getEffectiveTheme()).toBe("light-high-contrast");
-    });
-
-    it("should not choose a high-contrast theme if not available", () => {
-        // Given system prefers high contrast and dark, but we don't (yet)
-        // have a high-contrast dark theme
+    it("should fallback to regular theme when high-contrast is not available", () => {
+        // Given system prefers high contrast and dark, but high-contrast themes are not available
         global.matchMedia = makeMatchMedia({
             "(prefers-contrast: more)": true,
             "(prefers-color-scheme: dark)": true,

@@ -28,6 +28,7 @@ import { PinnedMessagesCard } from "../views/right_panel/PinnedMessagesCard";
 import { type RoomPermalinkCreator } from "../../utils/permalinks/Permalinks";
 import { type E2EStatus } from "../../utils/ShieldUtils";
 import TimelineCard from "../views/right_panel/TimelineCard";
+import ClapAIChatCard from "../views/right_panel/ClapAIChatCard";
 import { UPDATE_EVENT } from "../../stores/AsyncStore";
 import { type IRightPanelCard, type IRightPanelCardState } from "../../stores/right-panel/RightPanelStoreIPanelState";
 import { Action } from "../../dispatcher/actions";
@@ -276,6 +277,18 @@ export default class RightPanel extends React.Component<Props, IState> {
                 if (!!this.props.room && !!cardState?.widgetId) {
                     card = <WidgetCard room={this.props.room} widgetId={cardState.widgetId} onClose={this.onClose} />;
                 }
+                break;
+
+            case RightPanelPhases.ClapAIChat:
+                card = (
+                    <ClapAIChatCard
+                        roomId={cardState?.clapAIRoomId}
+                        resizeNotifier={this.props.resizeNotifier}
+                        onClose={this.onClose}
+                        permalinkCreator={this.props.permalinkCreator!}
+                        e2eStatus={this.props.e2eStatus}
+                    />
+                );
                 break;
         }
 

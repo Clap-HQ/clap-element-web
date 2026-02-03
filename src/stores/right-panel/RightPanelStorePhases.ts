@@ -28,6 +28,9 @@ export enum RightPanelPhases {
     // Thread stuff
     ThreadView = "ThreadView",
     ThreadPanel = "ThreadPanel",
+
+    // ClapAI stuff
+    ClapAIChat = "ClapAIChat",
 }
 
 export function backLabelForPhase(phase: RightPanelPhases | null): string | null {

@@ -15,7 +15,7 @@ module.exports = {
             {
                 // https://github.com/vector-im/element-web/issues/10544
                 // Tailwind CSS v4 디렉티브 허용
-                ignoreAtRules: ["define-mixin", "tailwind", "layer", "theme", "config", "source"],
+                ignoreAtRules: ["define-mixin", "mixin", "tailwind", "layer", "theme", "config", "source"],
             },
         ],
         // Disable `&_kind`-style selectors while our unused CSS approach is "Find & Replace All"

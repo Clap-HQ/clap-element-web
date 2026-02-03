@@ -2047,7 +2047,16 @@
         },
         "video_room_chat": {
             "title": "채팅"
+        },
+        "clapai_chat": {
+            "title": "AI 어시스턴트",
+            "loading": "AI 채팅을 불러오는 중...",
+            "confirm_description": "Clap AI와 대화를 시작하겠습니까?",
+            "confirm_button": "대화 시작"
         }
+    },
+    "room_header": {
+        "ai_button": "AI"
     },
     "room": {
         "3pid_invite_email_not_found_account": "이 초대는 계정과 연결되지 않은 %(email)s로 전송되었습니다",
@@ -3121,7 +3130,6 @@
         "tos": "서비스 약관"
     },
     "theme": {
-        "light_high_contrast": "밝은 고대비",
         "match_system": "시스템 설정과 일치"
     },
     "thread_view_back_action_label": "스레드로 돌아가기",

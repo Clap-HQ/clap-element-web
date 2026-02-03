@@ -196,7 +196,6 @@ describe("theme", () => {
             jest.spyOn(SettingsStore, "getValue").mockReturnValue([{ name: "pink" }]);
             expect(enumerateThemes()).toEqual({
                 "light": "Light",
-                "light-high-contrast": "Light high contrast",
                 "dark": "Dark",
                 "custom-pink": "pink",
             });
@@ -206,7 +205,6 @@ describe("theme", () => {
             jest.spyOn(SettingsStore, "getValue").mockReturnValue([23] as any);
             expect(enumerateThemes()).toEqual({
                 "light": "Light",
-                "light-high-contrast": "Light high contrast",
                 "dark": "Dark",
             });
         });

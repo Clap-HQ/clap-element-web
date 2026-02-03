@@ -25,6 +25,8 @@ export interface IRightPanelCardState {
     initialEventScrollIntoView?: boolean;
     // room summary
     focusRoomSearch?: boolean;
+    // ClapAI chat
+    clapAIRoomId?: string;
 }
 
 export interface IRightPanelCardStateStored {
@@ -38,6 +40,8 @@ export interface IRightPanelCardStateStored {
     initialEventId?: string;
     isInitialEventHighlighted?: boolean;
     initialEventScrollIntoView?: boolean;
+    // ClapAI chat
+    clapAIRoomId?: string;
 }
 
 export interface IRightPanelCard {
@@ -82,6 +86,7 @@ export function convertCardToStore(panelState: IRightPanelCard): IRightPanelCard
         memberInfoEventId: !!state?.memberInfoEvent?.getId() ? state.memberInfoEvent.getId() : undefined,
         initialEventId: !!state?.initialEvent?.getId() ? state.initialEvent.getId() : undefined,
         memberId: !!state?.member?.userId ? state.member.userId : undefined,
+        clapAIRoomId: state.clapAIRoomId,
     };
 
     return { state: stateStored, phase: panelState.phase };
@@ -101,6 +106,7 @@ function convertStoreToCard(panelStateStore: IRightPanelCardStored, room: Room):
             : undefined,
         initialEvent: !!stateStored?.initialEventId ? room.findEventById(stateStored.initialEventId) : undefined,
         member: (!!stateStored?.memberId && room.getMember(stateStored.memberId)) || undefined,
+        clapAIRoomId: stateStored.clapAIRoomId,
     };
 
     return { state: state, phase: panelStateStore.phase };

@@ -10,7 +10,7 @@ import React, { type ReactElement, useMemo } from "react";
 
 import { _t } from "../../../languageHandler";
 import { Action } from "../../../dispatcher/actions";
-import { findNonHighContrastTheme, getOrderedThemes } from "../../../theme";
+import { getOrderedThemes } from "../../../theme";
 import Dropdown from "../elements/Dropdown";
 import SettingsStore from "../../../settings/SettingsStore";
 import { SettingLevel } from "../../../settings/SettingLevel";
@@ -30,8 +30,7 @@ const QuickThemeSwitcher: React.FC<Props> = ({ requestClose }) => {
     const orderedThemes = useMemo(() => getOrderedThemes(), []);
 
     const themeState = useTheme();
-    const nonHighContrast = findNonHighContrastTheme(themeState.theme);
-    const theme = nonHighContrast ? nonHighContrast : themeState.theme;
+    const theme = themeState.theme;
     const { systemThemeActivated } = themeState;
 
     const themeOptions = [

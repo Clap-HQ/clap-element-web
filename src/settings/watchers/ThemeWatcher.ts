@@ -13,7 +13,6 @@ import { TypedEventEmitter } from "matrix-js-sdk/src/matrix";
 import SettingsStore from "../SettingsStore";
 import dis from "../../dispatcher/dispatcher";
 import { Action } from "../../dispatcher/actions";
-import { findHighContrastTheme } from "../../theme";
 import { type ActionPayload } from "../../dispatcher/payloads";
 import { SettingLevel } from "../SettingLevel";
 
@@ -32,7 +31,6 @@ export default class ThemeWatcher extends TypedEventEmitter<ThemeWatcherEvent, T
 
     private preferDark: MediaQueryList;
     private preferLight: MediaQueryList;
-    private preferHighContrast: MediaQueryList;
 
     private currentTheme: string;
 
@@ -42,7 +40,6 @@ export default class ThemeWatcher extends TypedEventEmitter<ThemeWatcherEvent, T
         // we can get the tristate of dark/light/unsupported
         this.preferDark = (<any>global).matchMedia("(prefers-color-scheme: dark)");
         this.preferLight = (<any>global).matchMedia("(prefers-color-scheme: light)");
-        this.preferHighContrast = (<any>global).matchMedia("(prefers-contrast: more)");
 
         this.currentTheme = this.getEffectiveTheme();
     }
@@ -52,14 +49,12 @@ export default class ThemeWatcher extends TypedEventEmitter<ThemeWatcherEvent, T
         this.systemThemeWatchRef = SettingsStore.watchSetting("use_system_theme", null, this.onChange);
         this.preferDark.addEventListener("change", this.onChange);
         this.preferLight.addEventListener("change", this.onChange);
-        this.preferHighContrast.addEventListener("change", this.onChange);
         this.dispatcherRef = dis.register(this.onAction);
     }
 
     public stop(): void {
         this.preferDark.removeEventListener("change", this.onChange);
         this.preferLight.removeEventListener("change", this.onChange);
-        this.preferHighContrast.removeEventListener("change", this.onChange);
         SettingsStore.unwatchSetting(this.systemThemeWatchRef);
         SettingsStore.unwatchSetting(this.themeWatchRef);
         dis.unregister(this.dispatcherRef);
@@ -126,19 +121,12 @@ export default class ThemeWatcher extends TypedEventEmitter<ThemeWatcherEvent, T
     }
 
     private themeBasedOnSystem(): string | undefined {
-        let newTheme: string | undefined;
         if (this.preferDark.matches) {
-            newTheme = "dark";
+            return "dark";
         } else if (this.preferLight.matches) {
-            newTheme = "light";
+            return "light";
         }
-        if (newTheme && this.preferHighContrast.matches) {
-            const hcTheme = findHighContrastTheme(newTheme);
-            if (hcTheme) {
-                newTheme = hcTheme;
-            }
-        }
-        return newTheme;
+        return undefined;
     }
 
     public isSystemThemeSupported(): boolean {
