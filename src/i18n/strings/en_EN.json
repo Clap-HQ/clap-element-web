@@ -1956,7 +1956,7 @@
         "video_room_chat": {
             "title": "Chat"
         },
-        "clapbot_chat": {
+        "clapai_chat": {
             "title": "AI Assistant",
             "loading": "Loading AI chat...",
             "confirm_description": "Would you like to start a conversation with Clap AI?",

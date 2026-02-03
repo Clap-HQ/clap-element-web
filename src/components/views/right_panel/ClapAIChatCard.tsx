@@ -36,7 +36,7 @@ import createRoom from "../../../createRoom";
 import { waitForMember } from "../../../utils/membership";
 import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
 import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
-import { CLAP_AI_USER_ID } from "../rooms/RoomHeader/ClapbotChatButton";
+import { CLAP_AI_USER_ID } from "../rooms/RoomHeader/ClapAIChatButton";
 
 interface IProps {
     roomId?: string;
@@ -57,7 +57,7 @@ interface IState {
     isCreatingRoom: boolean;
 }
 
-export default class ClapbotChatCard extends React.Component<IProps, IState> {
+export default class ClapAIChatCard extends React.Component<IProps, IState> {
     public static contextType = RoomContext;
     declare public context: React.ContextType<typeof RoomContext>;
 
@@ -66,7 +66,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
     private timelinePanel = React.createRef<TimelinePanel>();
     private card = React.createRef<HTMLDivElement>();
     private readReceiptsSettingWatcher: string | undefined;
-    private clapbotPermalinkCreator: RoomPermalinkCreator | null = null;
+    private clapAIPermalinkCreator: RoomPermalinkCreator | null = null;
 
     public constructor(props: IProps) {
         super(props);
@@ -80,7 +80,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
             isCreatingRoom: false,
         };
         if (room) {
-            this.clapbotPermalinkCreator = new RoomPermalinkCreator(room);
+            this.clapAIPermalinkCreator = new RoomPermalinkCreator(room);
         }
     }
 
@@ -93,7 +93,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
         this.layoutWatcherRef = SettingsStore.watchSetting("layout", null, (...[, , , value]) =>
             this.setState({ layout: value as Layout }),
         );
-        this.clapbotPermalinkCreator?.start();
+        this.clapAIPermalinkCreator?.start();
     }
 
     public componentWillUnmount(): void {
@@ -103,7 +103,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
         SettingsStore.unwatchSetting(this.layoutWatcherRef);
 
         dis.unregister(this.dispatcherRef);
-        this.clapbotPermalinkCreator?.stop();
+        this.clapAIPermalinkCreator?.stop();
     }
 
     private onRoomViewStoreUpdate = async (_initial?: boolean): Promise<void> => {
@@ -163,12 +163,12 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
             if (newRoomId) {
                 await waitForMember(client, newRoomId, CLAP_AI_USER_ID);
                 const room = client.getRoom(newRoomId);
-                this.clapbotPermalinkCreator = room ? new RoomPermalinkCreator(room) : null;
-                this.clapbotPermalinkCreator?.start();
+                this.clapAIPermalinkCreator = room ? new RoomPermalinkCreator(room) : null;
+                this.clapAIPermalinkCreator?.start();
                 this.setState({ room });
                 RightPanelStore.instance.setCard({
-                    phase: RightPanelPhases.ClapbotChat,
-                    state: { clapbotRoomId: newRoomId },
+                    phase: RightPanelPhases.ClapAIChat,
+                    state: { clapAIRoomId: newRoomId },
                 });
             }
         } catch (error) {
@@ -191,17 +191,17 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                 <BaseCard
                     className="mx_ThreadPanel mx_TimelineCard"
                     onClose={this.props.onClose}
-                    header={_t("right_panel|clapbot_chat|title")}
+                    header={_t("right_panel|clapai_chat|title")}
                 >
                     <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
                         <p className="text-center text-sm text-secondary-content">
                             {this.state.isCreatingRoom
-                                ? _t("right_panel|clapbot_chat|loading")
-                                : _t("right_panel|clapbot_chat|confirm_description")}
+                                ? _t("right_panel|clapai_chat|loading")
+                                : _t("right_panel|clapai_chat|confirm_description")}
                         </p>
                         {!this.state.isCreatingRoom && (
                             <Button size="sm" onClick={this.onStartConversation}>
-                                {_t("right_panel|clapbot_chat|confirm_button")}
+                                {_t("right_panel|clapai_chat|confirm_button")}
                             </Button>
                         )}
                     </div>
@@ -238,7 +238,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                     className="mx_ThreadPanel mx_TimelineCard"
                     onClose={this.props.onClose}
                     withoutScrollContainer={true}
-                    header={_t("right_panel|clapbot_chat|title")}
+                    header={_t("right_panel|clapai_chat|title")}
                     ref={this.card}
                 >
                     <Measured sensor={this.card} onMeasurement={this.onMeasurement} />
@@ -257,7 +257,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                             hidden={false}
                             showReactions={true}
                             className="mx_RoomView_messagePanel"
-                            permalinkCreator={this.clapbotPermalinkCreator!}
+                            permalinkCreator={this.clapAIPermalinkCreator!}
                             membersLoaded={true}
                             editState={this.state.editState}
                             onScroll={this.onScroll}
@@ -271,7 +271,7 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                             room={room}
                             resizeNotifier={this.props.resizeNotifier}
                             replyToEvent={this.state.replyToEvent}
-                            permalinkCreator={this.clapbotPermalinkCreator!}
+                            permalinkCreator={this.clapAIPermalinkCreator!}
                             e2eStatus={this.props.e2eStatus}
                             compact={true}
                         />

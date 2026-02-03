@@ -16,13 +16,13 @@ import { RightPanelPhases } from "../../../../stores/right-panel/RightPanelStore
 
 export const CLAP_AI_USER_ID = "@clap-ai:dev.clap.ac";
 
-export const ClapbotChatButton: React.FC = () => {
+export const ClapAIChatButton: React.FC = () => {
     const onClick = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
 
         const currentPhase = RightPanelStore.instance.currentCard.phase;
         const isOpen = RightPanelStore.instance.isOpen;
-        if (currentPhase === RightPanelPhases.ClapbotChat && isOpen) {
+        if (currentPhase === RightPanelPhases.ClapAIChat && isOpen) {
             RightPanelStore.instance.togglePanel(null);
             return;
         }
@@ -31,8 +31,8 @@ export const ClapbotChatButton: React.FC = () => {
         const existingRoom = findDMForUser(client, CLAP_AI_USER_ID);
 
         RightPanelStore.instance.setCard({
-            phase: RightPanelPhases.ClapbotChat,
-            state: { clapbotRoomId: existingRoom?.roomId },
+            phase: RightPanelPhases.ClapAIChat,
+            state: { clapAIRoomId: existingRoom?.roomId },
         });
         RightPanelStore.instance.show(null);
     }, []);

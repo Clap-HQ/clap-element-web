@@ -2048,7 +2048,7 @@
         "video_room_chat": {
             "title": "채팅"
         },
-        "clapbot_chat": {
+        "clapai_chat": {
             "title": "AI 어시스턴트",
             "loading": "AI 채팅을 불러오는 중...",
             "confirm_description": "Clap AI와 대화를 시작하겠습니까?",
