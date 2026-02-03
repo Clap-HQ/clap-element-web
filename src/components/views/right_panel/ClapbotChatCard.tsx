@@ -9,6 +9,7 @@ Please see LICENSE files in the repository root for full details.
 import React from "react";
 import { type MatrixEvent, NotificationCountType, type Room } from "matrix-js-sdk/src/matrix";
 import { KnownMembership } from "matrix-js-sdk/src/types";
+import { Button } from "@vector-im/compound-web";
 
 import BaseCard from "./BaseCard";
 import type ResizeNotifier from "../../../utils/ResizeNotifier";
@@ -32,9 +33,14 @@ import Measured from "../elements/Measured";
 import { UPDATE_EVENT } from "../../../stores/AsyncStore";
 import { ScopedRoomContextProvider } from "../../../contexts/ScopedRoomContext.tsx";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
+import createRoom from "../../../createRoom";
+import { waitForMember } from "../../../utils/membership";
+import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
+import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
+import { CLAP_AI_USER_ID } from "../rooms/RoomHeader/ClapbotChatButton";
 
 interface IProps {
-    roomId: string;
+    roomId?: string;
     onClose: () => void;
     resizeNotifier: ResizeNotifier;
     permalinkCreator: RoomPermalinkCreator;
@@ -51,6 +57,7 @@ interface IState {
     atEndOfLiveTimeline: boolean;
     narrow: boolean;
     showReadReceipts?: boolean;
+    isCreatingRoom: boolean;
 }
 
 export default class ClapbotChatCard extends React.Component<IProps, IState> {
@@ -66,13 +73,14 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
 
     public constructor(props: IProps) {
         super(props);
-        const room = MatrixClientPeg.safeGet().getRoom(props.roomId);
+        const room = props.roomId ? MatrixClientPeg.safeGet().getRoom(props.roomId) : null;
         this.state = {
             room,
-            showReadReceipts: SettingsStore.getValue("showReadReceipts", props.roomId),
+            showReadReceipts: props.roomId ? SettingsStore.getValue("showReadReceipts", props.roomId) : true,
             layout: SettingsStore.getValue("layout"),
             atEndOfLiveTimeline: true,
             narrow: false,
+            isCreatingRoom: false,
         };
         if (room) {
             this.clapbotPermalinkCreator = new RoomPermalinkCreator(room);
@@ -159,6 +167,34 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
         this.setState({ narrow });
     };
 
+    private onStartConversation = async (): Promise<void> => {
+        this.setState({ isCreatingRoom: true });
+        try {
+            const client = MatrixClientPeg.safeGet();
+            const newRoomId = await createRoom(client, {
+                dmUserId: CLAP_AI_USER_ID,
+                encryption: false,
+                spinner: false,
+                andView: false,
+            });
+            if (newRoomId) {
+                await waitForMember(client, newRoomId, CLAP_AI_USER_ID);
+                const room = client.getRoom(newRoomId);
+                this.clapbotPermalinkCreator = room ? new RoomPermalinkCreator(room) : null;
+                this.clapbotPermalinkCreator?.start();
+                this.setState({ room });
+                RightPanelStore.instance.setCard({
+                    phase: RightPanelPhases.ClapbotChat,
+                    state: { clapbotRoomId: newRoomId },
+                });
+            }
+        } catch (error) {
+            console.error("Failed to create Clap AI DM:", error);
+        } finally {
+            this.setState({ isCreatingRoom: false });
+        }
+    };
+
     private jumpToLiveTimeline = (): void => {
         if (this.state.initialEventId && this.state.isInitialEventHighlighted && this.state.room) {
             dis.dispatch({
@@ -181,8 +217,17 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                     onClose={this.props.onClose}
                     header={_t("right_panel|clapbot_chat|title")}
                 >
-                    <div className="mx_TimelineCard_timeline">
-                        <p style={{ padding: "16px", textAlign: "center" }}>{_t("right_panel|clapbot_chat|loading")}</p>
+                    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
+                        <p className="text-center text-sm text-secondary-content">
+                            {this.state.isCreatingRoom
+                                ? _t("right_panel|clapbot_chat|loading")
+                                : _t("right_panel|clapbot_chat|confirm_description")}
+                        </p>
+                        {!this.state.isCreatingRoom && (
+                            <Button size="sm" onClick={this.onStartConversation}>
+                                {_t("right_panel|clapbot_chat|confirm_button")}
+                            </Button>
+                        )}
                     </div>
                 </BaseCard>
             );
@@ -210,7 +255,8 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
         return (
             <ScopedRoomContextProvider
                 {...this.context}
-                timelineRenderingType={this.context.timelineRenderingType}
+                room={room}
+                roomId={room.roomId}
                 liveTimeline={timelineSet?.getLiveTimeline()}
                 narrow={this.state.narrow}
             >

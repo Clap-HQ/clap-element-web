@@ -280,17 +280,15 @@ export default class RightPanel extends React.Component<Props, IState> {
                 break;
 
             case RightPanelPhases.ClapbotChat:
-                if (!!cardState?.clapbotRoomId) {
-                    card = (
-                        <ClapbotChatCard
-                            roomId={cardState.clapbotRoomId}
-                            resizeNotifier={this.props.resizeNotifier}
-                            onClose={this.onClose}
-                            permalinkCreator={this.props.permalinkCreator!}
-                            e2eStatus={this.props.e2eStatus}
-                        />
-                    );
-                }
+                card = (
+                    <ClapbotChatCard
+                        roomId={cardState?.clapbotRoomId}
+                        resizeNotifier={this.props.resizeNotifier}
+                        onClose={this.onClose}
+                        permalinkCreator={this.props.permalinkCreator!}
+                        e2eStatus={this.props.e2eStatus}
+                    />
+                );
                 break;
         }
 
