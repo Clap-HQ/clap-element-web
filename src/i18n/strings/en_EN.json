@@ -1958,7 +1958,9 @@
         },
         "clapbot_chat": {
             "title": "AI Assistant",
-            "loading": "Loading AI chat..."
+            "loading": "Loading AI chat...",
+            "confirm_description": "Would you like to start a conversation with Clap AI?",
+            "confirm_button": "Start conversation"
         }
     },
     "room_header": {
