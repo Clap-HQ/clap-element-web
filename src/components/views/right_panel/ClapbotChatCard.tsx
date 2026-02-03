@@ -28,7 +28,6 @@ import ContentMessages from "../../../ContentMessages";
 import UploadBar from "../../structures/UploadBar";
 import SettingsStore from "../../../settings/SettingsStore";
 import JumpToBottomButton from "../rooms/JumpToBottomButton";
-import { type ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
 import Measured from "../elements/Measured";
 import { UPDATE_EVENT } from "../../../stores/AsyncStore";
 import { ScopedRoomContextProvider } from "../../../contexts/ScopedRoomContext.tsx";
@@ -51,8 +50,6 @@ interface IState {
     room: Room | null;
     editState?: EditorStateTransfer;
     replyToEvent?: MatrixEvent;
-    initialEventId?: string;
-    isInitialEventHighlighted?: boolean;
     layout: Layout;
     atEndOfLiveTimeline: boolean;
     narrow: boolean;
@@ -110,13 +107,10 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
     }
 
     private onRoomViewStoreUpdate = async (_initial?: boolean): Promise<void> => {
-        const newState: Pick<IState, any> = {
-            initialEventId: this.context.roomViewStore.getInitialEventId(),
-            isInitialEventHighlighted: this.context.roomViewStore.isInitialEventHighlighted(),
-            replyToEvent: this.context.roomViewStore.getQuotingEvent(),
-        };
-
-        this.setState(newState);
+        const quotingEvent = this.context.roomViewStore.getQuotingEvent();
+        this.setState({
+            replyToEvent: quotingEvent ?? undefined,
+        });
     };
 
     private onAction = (payload: ActionPayload): void => {
@@ -148,17 +142,6 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
         } else {
             this.setState({
                 atEndOfLiveTimeline: false,
-            });
-        }
-
-        if (this.state.initialEventId && this.state.isInitialEventHighlighted && this.state.room) {
-            dis.dispatch<ViewRoomPayload>({
-                action: Action.ViewRoom,
-                room_id: this.state.room.roomId,
-                event_id: this.state.initialEventId,
-                highlighted: false,
-                replyingToEvent: this.state.replyToEvent,
-                metricsTrigger: undefined,
             });
         }
     };
@@ -196,15 +179,8 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
     };
 
     private jumpToLiveTimeline = (): void => {
-        if (this.state.initialEventId && this.state.isInitialEventHighlighted && this.state.room) {
-            dis.dispatch({
-                action: Action.ViewRoom,
-                room_id: this.state.room.roomId,
-            });
-        } else {
-            this.timelinePanel.current?.jumpToLiveTimeline();
-            dis.fire(Action.FocusSendMessageComposer);
-        }
+        this.timelinePanel.current?.jumpToLiveTimeline();
+        dis.fire(Action.FocusSendMessageComposer);
     };
 
     public render(): React.ReactNode {
@@ -232,8 +208,6 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                 </BaseCard>
             );
         }
-
-        const highlightedEventId = this.state.isInitialEventHighlighted ? this.state.initialEventId : undefined;
 
         let jumpToBottom;
         if (!this.state.atEndOfLiveTimeline) {
@@ -286,8 +260,6 @@ export default class ClapbotChatCard extends React.Component<IProps, IState> {
                             permalinkCreator={this.clapbotPermalinkCreator!}
                             membersLoaded={true}
                             editState={this.state.editState}
-                            eventId={this.state.initialEventId}
-                            highlightedEventId={highlightedEventId}
                             onScroll={this.onScroll}
                         />
                     </div>
