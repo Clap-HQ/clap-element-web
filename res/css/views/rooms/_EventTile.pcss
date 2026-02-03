@@ -634,11 +634,11 @@ $left-gutter: 64px;
                 position: absolute;
                 inset-block-start: auto;
 
-                /* as close to right gutter without clipping as possible */
-                inset-inline-end: calc(-1 * var(--ReadReceiptGroup_EventBubbleTile-spacing-end));
+                /* Position avatar in the right margin area (44px avatar + 8px gap from message) */
+                inset-inline-end: calc(-64px + var(--ReadReceiptGroup_EventBubbleTile-spacing-end));
 
                 /* (EventTileLine.line-height - ReadReceiptGroup.height) / 2 */
-                /* this centers the ReadReceiptGroup if we’ve got a single line */
+                /* this centers the ReadReceiptGroup if we've got a single line */
                 inset-block-end: calc(($font-18px - 24px) / 2);
             }
         }
@@ -654,7 +654,6 @@ $left-gutter: 64px;
             /* Other half of the gutter is provided by margin-top on the first
             tile of the section */
             margin-bottom: calc(var(--gutterSize) / 2);
-            margin-right: 60px;
         }
     }
 }

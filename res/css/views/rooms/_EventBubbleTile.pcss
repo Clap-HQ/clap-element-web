@@ -11,30 +11,29 @@ Please see LICENSE files in the repository root for full details.
     .mx_RoomView_statusArea,
     .mx_MessageComposer {
         width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
+        margin: 0;
     }
 }
 
 .mx_EventTile[data-layout="bubble"],
 .mx_GenericEventListSummary[data-layout="bubble"] {
-    --avatarSize: 32px;
+    --avatarSize: 30px;
     --gutterSize: 11px;
     --cornerRadius: 12px;
     --maxWidth: 70%;
 
     /* For both event tile and event list summary */
-    --EventTile_bubble-margin-inline-start: 49px;
-    --EventTile_bubble-margin-inline-end: 60px;
+    --EventTile_bubble-margin-inline-start: 0;
+    --EventTile_bubble-margin-inline-end: 60px; /* 44px avatar + 8px gap */
 
     margin-inline-start: var(--EventTile_bubble-margin-inline-start);
     margin-inline-end: var(--EventTile_bubble-margin-inline-end);
 }
 
 .mx_EventTile[data-layout="bubble"] {
-    --EventTile_bubble_line-margin-inline-start: -9px;
-    --EventTile_bubble_line-margin-inline-end: -12px;
-    --EventTile_bubble_gap-inline: 5px;
+    --EventTile_bubble_line-margin-inline-start: 0;
+    --EventTile_bubble_line-margin-inline-end: 0;
+    --EventTile_bubble_gap-inline: $spacing-8;
 
     .mx_MessageTimestamp {
         width: unset; /* Cancel the default width */
@@ -172,7 +171,6 @@ Please see LICENSE files in the repository root for full details.
 
     .mx_EventTile_footer {
         margin: var(--cpd-space-1-5x) 0;
-        margin-inline: var(--EventTile_bubble_line-margin-inline-start) var(--EventTile_bubble_line-margin-inline-end);
     }
 
     &[data-self="false"] {
@@ -200,7 +198,11 @@ Please see LICENSE files in the repository root for full details.
             margin-inline-end: auto;
         }
 
-        .mx_ReactionsRow,
+        .mx_ReactionsRow {
+            justify-content: flex-start;
+            margin-left: calc(var(--avatarSize) + var(--EventTile_bubble_gap-inline));
+        }
+
         .mx_EventTile_footer {
             justify-content: flex-start;
         }
@@ -364,12 +366,8 @@ Please see LICENSE files in the repository root for full details.
     }
 
     &.mx_EventTile_continuation[data-self="false"] {
-        /* Avatar가 없으므로 content_wrapper에 왼쪽 여백 추가 */
-        .mx_EventTile_content_wrapper {
-            margin-left: calc(var(--avatarSize) + $spacing-8); /* avatar width + gap */
-        }
-
         .mx_EventTile_line {
+            margin-left: calc(var(--avatarSize) + var(--EventTile_bubble_gap-inline));
             border-top-left-radius: 0;
 
             .mx_MImageBody .mx_MImageBody_thumbnail_container,
@@ -396,12 +394,8 @@ Please see LICENSE files in the repository root for full details.
     }
 
     &.mx_EventTile_continuation[data-self="true"] {
-        /* Avatar가 없으므로 content_wrapper에 오른쪽 여백 추가 */
-        .mx_EventTile_content_wrapper {
-            margin-right: calc(var(--avatarSize) + $spacing-8); /* avatar width + gap */
-        }
-
         .mx_EventTile_line {
+            margin-right: calc(var(--avatarSize) + var(--EventTile_bubble_gap-inline));
             border-top-right-radius: 0;
 
             .mx_MImageBody .mx_MImageBody_thumbnail_container,
