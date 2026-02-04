@@ -7,6 +7,11 @@ Please see LICENSE files in the repository root for full details.
 
 import { createVariable } from "@divkitframework/divkit/client";
 import type { AnyVariable } from "@divkitframework/divkit/typings/variables";
+import type { Action } from "@divkitframework/divkit/typings/common";
+import { EventType, type MatrixEvent } from "matrix-js-sdk/src/matrix";
+import { type RoomMessageEventContent } from "matrix-js-sdk/src/types";
+
+import { MatrixClientPeg } from "../MatrixClientPeg";
 
 /**
  * Type definitions for Clap AI message content structure
@@ -82,4 +87,77 @@ export function getCardVariables(card: DivKitCard): AnyVariable[] {
     }
 
     return card.variables.map((variable) => createVariable(variable.name, variable.type, variable.value));
+}
+
+function findButtonTextByAction(element: unknown, actionLogId: string, actionUrl: string): string | null {
+    if (!element || typeof element !== "object") {
+        return null;
+    }
+
+    const el = element as Record<string, unknown>;
+
+    if (Array.isArray(el.actions)) {
+        for (const action of el.actions as Array<{ log_id?: string; url?: string }>) {
+            if (action.log_id === actionLogId || action.url === actionUrl) {
+                if (typeof el.text === "string") {
+                    return el.text;
+                }
+            }
+        }
+    }
+
+    if (el.action && typeof el.action === "object") {
+        const action = el.action as { log_id?: string; url?: string };
+        if (action.log_id === actionLogId || action.url === actionUrl) {
+            if (typeof el.text === "string") {
+                return el.text;
+            }
+        }
+    }
+
+    const childProperties = ["items", "div", "states"];
+    for (const prop of childProperties) {
+        if (Array.isArray(el[prop])) {
+            for (const child of el[prop] as unknown[]) {
+                const result = findButtonTextByAction(child, actionLogId, actionUrl);
+                if (result) return result;
+            }
+        } else if (el[prop] && typeof el[prop] === "object") {
+            const result = findButtonTextByAction(el[prop], actionLogId, actionUrl);
+            if (result) return result;
+        }
+    }
+
+    return null;
+}
+
+export async function handleClapAction(
+    action: Action & { url: string },
+    mxEvent: MatrixEvent,
+    card: DivKitCard,
+): Promise<void> {
+    if (!action.url.startsWith("clap://")) {
+        console.warn("[ClapAIDivKit] Ignoring non-clap:// action:", action.url);
+        return;
+    }
+
+    const roomId = mxEvent.getRoomId();
+    if (!roomId) {
+        console.error("[ClapAIDivKit] Cannot send message: no room ID");
+        return;
+    }
+
+    const buttonText = findButtonTextByAction(card, action.log_id, action.url) ?? action.log_id;
+
+    const content = {
+        "msgtype": "m.text",
+        "body": buttonText,
+        "ac.clap.action": {
+            url: action.url,
+            log_id: action.log_id,
+        },
+    } as RoomMessageEventContent;
+
+    const cli = MatrixClientPeg.safeGet();
+    await cli.sendEvent(roomId, EventType.RoomMessage, content);
 }

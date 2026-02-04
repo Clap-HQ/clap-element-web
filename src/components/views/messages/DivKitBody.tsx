@@ -15,6 +15,7 @@ import {
     extractDivKitCard,
     getPaletteVariables,
     getCardVariables,
+    handleClapAction,
     type ClapAIContent,
 } from "../../../utils/ClapAIDivKit";
 import type { IBodyProps } from "./IBodyProps";
@@ -56,6 +57,9 @@ const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => 
             target: containerRef.current,
             json: divJson,
             globalVariablesController,
+            onCustomAction: (action) => {
+                handleClapAction(action, mxEvent, card);
+            },
             onError: (details) => {
                 console.error("[DivKitBody] Render error:", details);
             },
