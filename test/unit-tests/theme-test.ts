@@ -204,8 +204,8 @@ describe("theme", () => {
         it("should be robust to malformed custom_themes values", () => {
             jest.spyOn(SettingsStore, "getValue").mockReturnValue([23] as any);
             expect(enumerateThemes()).toEqual({
-                "light": "Light",
-                "dark": "Dark",
+                light: "Light",
+                dark: "Dark",
             });
         });
     });

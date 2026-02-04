@@ -38,6 +38,9 @@ import MjolnirBody from "./MjolnirBody";
 import MBeaconBody from "./MBeaconBody";
 import { DecryptionFailureBody } from "./DecryptionFailureBody";
 import { type GetRelationsForEvent, type IEventTileOps } from "../rooms/EventTile";
+import DivKitBody from "./DivKitBody";
+import { extractDivKitCard, type ClapAIContent } from "../../../utils/ClapAIDivKit";
+import DivKitErrorBoundary from "./DivKitErrorBoundary";
 
 // onMessageAllowed is handled internally
 interface IProps extends Omit<IBodyProps, "onMessageAllowed" | "mediaEventHelper"> {
@@ -272,6 +275,13 @@ export default class MessageEvent extends React.Component<IProps> implements IMe
             if (M_LOCATION.matches(type) || (type === EventType.RoomMessage && msgtype === MsgType.Location)) {
                 BodyType = MLocationBody;
             }
+
+            // Check for DivKit card in Clap AI messages
+            const clapAIContent = content as ClapAIContent;
+            const divKitCard = extractDivKitCard(clapAIContent);
+            if (divKitCard) {
+                BodyType = DivKitBody;
+            }
         }
 
         if (SettingsStore.getValue("feature_mjolnir")) {
@@ -313,6 +323,14 @@ export default class MessageEvent extends React.Component<IProps> implements IMe
         };
         if (hasCaption) {
             return <CaptionBody {...bodyProps} WrappedBodyType={BodyType} />;
+        }
+
+        if (BodyType === DivKitBody) {
+            return (
+                <DivKitErrorBoundary mxEvent={this.props.mxEvent}>
+                    <BodyType {...bodyProps} />
+                </DivKitErrorBoundary>
+            );
         }
 
         return BodyType ? <BodyType {...bodyProps} /> : null;

@@ -1192,6 +1192,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                     {
                         "ref": this.ref,
                         "className": classes,
+                        "tabIndex": -1,
                         "aria-live": ariaLive,
                         "aria-atomic": true,
                         "data-scroll-tokens": scrollToken,
@@ -1204,44 +1205,44 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                         "onFocus": () => this.setState({ focusWithin: true }),
                         "onBlur": () => this.setState({ focusWithin: false }),
                     },
-                    [
-                        <div className="mx_EventTile_senderDetails" key="mx_EventTile_senderDetails">
-                            {avatar}
+                    <>
+                        {avatar}
+                        <div className="mx_EventTile_content_wrapper">
                             {sender}
-                        </div>,
-                        <div
-                            id={this.id}
-                            className={lineClasses}
-                            key="mx_EventTile_line"
-                            onContextMenu={this.onContextMenu}
-                        >
-                            {this.renderContextMenu()}
-                            {replyChain}
-                            {renderTile(TimelineRenderingType.Thread, {
-                                ...this.props,
+                            <div
+                                id={this.id}
+                                className={lineClasses}
+                                key="mx_EventTile_line"
+                                onContextMenu={this.onContextMenu}
+                            >
+                                {this.renderContextMenu()}
+                                {replyChain}
+                                {renderTile(TimelineRenderingType.Thread, {
+                                    ...this.props,
 
-                                // overrides
-                                ref: this.tile,
-                                isSeeingThroughMessageHiddenForModeration,
+                                    // overrides
+                                    ref: this.tile,
+                                    isSeeingThroughMessageHiddenForModeration,
 
-                                // appease TS
-                                highlights: this.props.highlights,
-                                highlightLink: this.props.highlightLink,
-                                permalinkCreator: this.props.permalinkCreator!,
-                                showHiddenEvents: this.context.showHiddenEvents,
-                            })}
-                            {actionBar}
-                            {linkedTimestamp}
-                            {msgOption}
-                        </div>,
-                        hasFooter && (
-                            <div className="mx_EventTile_footer" key="mx_EventTile_footer">
-                                {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
-                                {reactionsRow}
-                                {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
+                                    // appease TS
+                                    highlights: this.props.highlights,
+                                    highlightLink: this.props.highlightLink,
+                                    permalinkCreator: this.props.permalinkCreator!,
+                                    showHiddenEvents: this.context.showHiddenEvents,
+                                })}
+                                {actionBar}
+                                {linkedTimestamp}
                             </div>
-                        ),
-                    ],
+                            {hasFooter && (
+                                <div className="mx_EventTile_footer" key="mx_EventTile_footer">
+                                    {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
+                                    {reactionsRow}
+                                    {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
+                                </div>
+                            )}
+                        </div>
+                        {msgOption}
+                    </>,
                 );
             }
             case TimelineRenderingType.Notification:

@@ -64,9 +64,7 @@ function main() {
         let distContent = fs.readFileSync(distDtsPath, "utf8");
         const translationKeyRegex = /export declare type TranslationKey =[\s\S]*?;/;
         const newTranslationKeyType =
-            "export declare type TranslationKey =\n" +
-            keys.map((k) => `| "${k}"`).join("\n") +
-            ";";
+            "export declare type TranslationKey =\n" + keys.map((k) => `| "${k}"`).join("\n") + ";";
         if (translationKeyRegex.test(distContent)) {
             distContent = distContent.replace(translationKeyRegex, newTranslationKeyType);
             fs.writeFileSync(distDtsPath, distContent, "utf8");

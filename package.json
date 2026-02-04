@@ -82,6 +82,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.12.5",
+        "@divkitframework/divkit": "^32.35.0",
         "@element-hq/element-web-module-api": "1.9.0",
         "@element-hq/web-shared-components": "link:packages/shared-components",
         "@fontsource/fira-code": "^5",
