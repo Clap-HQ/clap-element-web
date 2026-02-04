@@ -212,81 +212,89 @@ if (divKitCard) {
 ### ESLint Error Fixes
 
 #### 1. Import Order Violations
+
 - **Error**: `There should be no empty line within import group` (import/order)
 - **Fix**: Reorganized imports into proper groups with correct spacing
 - **Pattern**: Third-party imports → blank line → local imports
 - **Files affected**: DivKitBody.tsx, ClapAIDivKit.ts, vector/index.ts
 
 #### 2. React.forwardRef Restriction
+
 - **Error**: `'React.forwardRef' is restricted from being used` (no-restricted-properties)
 - **Reason**: Element codebase restricts React.forwardRef usage
 - **Fix**: Changed to ref prop pattern
-  ```typescript
-  // Before (restricted)
-  const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => {
-      return <div ref={containerRef} />;
-  });
-  
-  // After (allowed)
-  interface Props extends IBodyProps {
-      forwardedRef?: React.Ref<HTMLDivElement>;
-  }
-  const DivKitBody: React.FC<Props> = ({ mxEvent, forwardedRef }) => {
-      return <div ref={forwardedRef || containerRef} />;
-  };
-  ```
+
+    ```typescript
+    // Before (restricted)
+    const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => {
+        return <div ref={containerRef} />;
+    });
+
+    // After (allowed)
+    interface Props extends IBodyProps {
+        forwardedRef?: React.Ref<HTMLDivElement>;
+    }
+    const DivKitBody: React.FC<Props> = ({ mxEvent, forwardedRef }) => {
+        return <div ref={forwardedRef || containerRef} />;
+    };
+    ```
 
 #### 3. Ref Cleanup in useEffect
+
 - **Error**: `The ref value 'containerRef.current' will likely have changed by the time this effect cleanup function runs` (react-hooks/exhaustive-deps)
 - **Reason**: React refs can change between effect execution and cleanup
 - **Fix**: Capture ref value in variable inside effect
-  ```typescript
-  // Before (warning)
-  useEffect(() => {
-      // ... render logic ...
-      return () => {
-          if (containerRef.current) {
-              containerRef.current.innerHTML = "";
-          }
-      };
-  }, [deps]);
-  
-  // After (correct)
-  useEffect(() => {
-      const container = containerRef.current;
-      // ... render logic ...
-      return () => {
-          if (container) {
-              container.innerHTML = "";
-          }
-      };
-  }, [deps]);
-  ```
+
+    ```typescript
+    // Before (warning)
+    useEffect(() => {
+        // ... render logic ...
+        return () => {
+            if (containerRef.current) {
+                containerRef.current.innerHTML = "";
+            }
+        };
+    }, [deps]);
+
+    // After (correct)
+    useEffect(() => {
+        const container = containerRef.current;
+        // ... render logic ...
+        return () => {
+            if (container) {
+                container.innerHTML = "";
+            }
+        };
+    }, [deps]);
+    ```
 
 ### Verification Results
+
 - ✅ `yarn lint:js` - All ESLint and Prettier checks pass (55.53s)
 - ✅ `yarn lint:types` - TypeScript type checking passes (49.95s)
 - ✅ `yarn test` - All 31 DivKit tests pass (6.15s)
 - ⏳ Browser QA - Deferred to Task 8 (manual verification in dev server)
 
 ### Prettier Gotcha
+
 - Prettier had infinite loop on plan file indentation (lines 376-378)
 - Issue: Nested indentation (20+ spaces) caused Prettier to keep reformatting
 - Fix: Manually reduced indentation to 4 spaces
 - Lesson: Avoid deep indentation in Markdown files
 
 ### Commit Strategy
+
 - Commit message: `chore(ai): fix ESLint errors in DivKit integration`
 - Included all ESLint fixes in single atomic commit
 - Notepad and plan updates included in same commit
 - Commit hash: 3a33e915a2
-
 
 ## Plan Completion Status (2026-02-04)
 
 ### All Implementation Tasks Complete ✅
 
 **Completed Tasks (0-7)**:
+
 - Task 0: DivKit 패키지 설치 (commit ddd0ca9e2c)
 - Task 1: ClapAIDivKit 유틸리티 생성 (commit a863ce9997)
 - Task 2: DivKitBody 컴포넌트 구현 (commit 73cec5032f)
@@ -306,6 +314,7 @@ if (divKitCard) {
 ### Manual QA Requirements (Remaining)
 
 **Browser-based verification needed**:
+
 1. DivKit 카드 렌더링 확인 (AI 메시지)
 2. Light/Dark 테마 색상 적용 확인
 3. 테마 변경 시 즉시 색상 업데이트 확인
@@ -314,10 +323,10 @@ if (divKitCard) {
 
 **Next Step**: Playwright E2E 테스트 작성 또는 수동 QA
 
-
 ## Task 8: Playwright E2E Test Suite (2026-02-04)
 
 ### Test File Created
+
 - **Location**: `playwright/e2e/messages/divkit-ai-messages.spec.ts`
 - **Size**: 316 lines, 12KB
 - **Test Count**: 6 test cases (exceeds 4+ requirement)
@@ -325,18 +334,21 @@ if (divKitCard) {
 ### Test Coverage
 
 #### Test 1: DivKit Card Rendering
+
 - **Name**: "should render DivKit card in AI message"
 - **Verifies**: `.mx_DivKitBody` element is visible and contains card content
 - **Assertions**: Card text "Test DivKit Card" is rendered
 - **Screenshot**: `divkit-ai-message-rendered.png`
 
 #### Test 2: Fallback to TextualBody
+
 - **Name**: "should render TextualBody when no DivKit card"
 - **Verifies**: Plain AI messages render as TextualBody, not DivKitBody
 - **Assertions**: `.mx_EventTile_body` contains message text, `.mx_DivKitBody` is NOT visible
 - **Screenshot**: Implicit (no screenshot for negative case)
 
 #### Test 3: Button Click Action
+
 - **Name**: "should send message when DivKit button clicked"
 - **Verifies**: Clicking DivKit button sends message with action metadata
 - **Assertions**: New message appears after button click, contains button text "승인"
@@ -344,6 +356,7 @@ if (divKitCard) {
 - **Key Pattern**: Counts initial messages, clicks button, verifies new message count increased
 
 #### Test 4: Theme Palette Application
+
 - **Name**: "should apply palette colors based on theme"
 - **Verifies**: DivKit card renders in both light and dark themes
 - **Assertions**: Card visible in light theme, still visible after switching to dark theme
@@ -351,15 +364,17 @@ if (divKitCard) {
 - **Theme Switch**: Uses Settings > Appearance > Dark theme option
 
 #### Test 5: Multiple Messages in Timeline
+
 - **Name**: "should handle multiple DivKit messages in timeline"
 - **Verifies**: Multiple DivKit cards and plain messages coexist in timeline
-- **Assertions**: 
-  - At least 3 event tiles rendered
-  - At least 2 DivKit bodies visible
-  - Last message is plain text (not DivKit)
+- **Assertions**:
+    - At least 3 event tiles rendered
+    - At least 2 DivKit bodies visible
+    - Last message is plain text (not DivKit)
 - **Screenshot**: `divkit-multiple-messages.png`
 
 #### Test 6: Card with Variables
+
 - **Name**: "should render DivKit card with custom variables"
 - **Verifies**: DivKit cards with custom variables render correctly
 - **Assertions**: Card visible and contains "Variable Test" text
@@ -369,6 +384,7 @@ if (divKitCard) {
 ### Test Data Patterns
 
 #### Helper Function: `createAIMessageWithDivKit()`
+
 ```typescript
 {
   msgtype: "m.text",
@@ -383,6 +399,7 @@ if (divKitCard) {
 ```
 
 #### Helper Function: `createPlainAIMessage()`
+
 ```typescript
 {
   msgtype: "m.text",
@@ -393,6 +410,7 @@ if (divKitCard) {
 ### Playwright Patterns Used
 
 #### Room Creation and Navigation
+
 ```typescript
 const roomId = await app.client.createRoom({ name: "Test Room" });
 await page.goto(`#/room/${roomId}`);
@@ -400,11 +418,13 @@ await page.locator(".mx_RoomView").waitFor();
 ```
 
 #### Event Sending
+
 ```typescript
 await bot.sendEvent(roomId, null, "m.room.message", messageContent);
 ```
 
 #### Element Verification
+
 ```typescript
 const msgTile = page.locator(".mx_EventTile_last");
 await expect(msgTile).toBeVisible();
@@ -412,11 +432,13 @@ await expect(msgTile).toContainText("Expected text");
 ```
 
 #### Screenshot Capture
+
 ```typescript
 await expect(msgTile).toMatchScreenshot("filename.png");
 ```
 
 #### Theme Switching
+
 ```typescript
 await page.goto("#/user");
 await page.getByRole("button", { name: "Settings" }).click();
@@ -428,21 +450,25 @@ await darkThemeOption.click();
 ### Key Insights
 
 #### DivKit Selector
+
 - DivKit renders into `.mx_DivKitBody` container
 - Button elements are rendered as text with actions
 - Button text selector: `divKitBody.locator("text=승인")`
 
 #### Message Timing
+
 - Use `page.waitForTimeout(500)` for message send confirmation
 - Use `.waitFor()` on locators for element appearance
 - Count messages before/after action for verification
 
 #### Test Isolation
+
 - Each test creates its own room
 - Bot sends events directly (no UI interaction needed)
 - Tests are independent and can run in parallel
 
 #### Screenshot Naming Convention
+
 - Descriptive names: `divkit-ai-message-rendered.png`
 - Theme variants: `divkit-light-theme.png`, `divkit-dark-theme.png`
 - Action results: `divkit-button-click-message.png`
@@ -473,6 +499,7 @@ await darkThemeOption.click();
 ### Playwright E2E Test Suite Created ✅
 
 **File**: `playwright/e2e/messages/divkit-ai-messages.spec.ts`
+
 - **Size**: 316 lines
 - **Test Count**: 6 comprehensive tests
 - **Commit**: dd5a1a2c34
@@ -480,35 +507,36 @@ await darkThemeOption.click();
 ### Test Coverage
 
 1. **DivKit Card Rendering**
-   - Verifies `.mx_DivKitBody` element appears
-   - Checks card content is rendered
-   - Uses Matrix bot to send AI message with DivKit card
+    - Verifies `.mx_DivKitBody` element appears
+    - Checks card content is rendered
+    - Uses Matrix bot to send AI message with DivKit card
 
 2. **Fallback to TextualBody**
-   - Verifies plain messages render as TextualBody
-   - Ensures DivKitBody is NOT rendered for non-AI messages
+    - Verifies plain messages render as TextualBody
+    - Ensures DivKitBody is NOT rendered for non-AI messages
 
 3. **Button Click Action**
-   - Simulates button click in DivKit card
-   - Verifies message sent with `ac.clap.action` field
-   - Checks action URL and log_id are correct
+    - Simulates button click in DivKit card
+    - Verifies message sent with `ac.clap.action` field
+    - Checks action URL and log_id are correct
 
 4. **Theme Palette Application**
-   - Tests light and dark theme rendering
-   - Verifies DivKit re-renders on theme change
-   - Uses app.settings to switch themes
+    - Tests light and dark theme rendering
+    - Verifies DivKit re-renders on theme change
+    - Uses app.settings to switch themes
 
 5. **Multiple Messages**
-   - Tests multiple DivKit cards in timeline
-   - Verifies each card renders independently
+    - Tests multiple DivKit cards in timeline
+    - Verifies each card renders independently
 
 6. **Custom Variables**
-   - Tests card.variables rendering
-   - Verifies DivKit Variable system integration
+    - Tests card.variables rendering
+    - Verifies DivKit Variable system integration
 
 ### Test Execution Blocker
 
 **Issue**: Docker container runtime not available locally
+
 - E2E tests require Matrix homeserver in Docker
 - Tests will run in CI/CD (GitHub Actions)
 - Manual QA in dev server still required
@@ -516,12 +544,14 @@ await darkThemeOption.click();
 ### Next Steps
 
 **Option 1**: Start Docker and run tests
+
 ```bash
 open -a Docker
 yarn test:playwright playwright/e2e/messages/divkit-ai-messages.spec.ts
 ```
 
 **Option 2**: Manual QA in dev server
+
 ```bash
 yarn start
 # Navigate to AI chat room
@@ -530,46 +560,47 @@ yarn start
 ```
 
 **Option 3**: Wait for CI/CD
+
 - Tests will run automatically in GitHub Actions
 - PR checks will verify E2E tests pass
-
 
 ## Manual QA Guide Created (2026-02-04)
 
 ### Comprehensive QA Documentation ✅
 
 **File**: `.sisyphus/notepads/divkit-ai-rendering/manual-qa-guide.md`
+
 - **Test Scenarios**: 6 comprehensive tests
 - **Commit**: (pending)
 
 ### QA Test Coverage
 
 1. **DivKit Card Rendering**
-   - Verify `.mx_DivKitBody` component renders
-   - Check card content displays correctly
-   - Ensure layout is not broken
+    - Verify `.mx_DivKitBody` component renders
+    - Check card content displays correctly
+    - Ensure layout is not broken
 
 2. **Fallback to TextualBody**
-   - Verify plain messages use TextualBody
-   - Ensure DivKitBody is NOT used for non-AI messages
+    - Verify plain messages use TextualBody
+    - Ensure DivKitBody is NOT used for non-AI messages
 
 3. **Light Theme Colors**
-   - Verify palette.light colors applied
-   - Check background and text colors match spec
+    - Verify palette.light colors applied
+    - Check background and text colors match spec
 
 4. **Dark Theme Colors**
-   - Verify palette.dark colors applied
-   - Check background and text colors match spec
+    - Verify palette.dark colors applied
+    - Check background and text colors match spec
 
 5. **Theme Change Reactivity**
-   - Verify instant color update on theme change
-   - No page refresh required
-   - No flickering or broken layout
+    - Verify instant color update on theme change
+    - No page refresh required
+    - No flickering or broken layout
 
 6. **Button Click Action**
-   - Verify button click sends message
-   - Check message body matches button text
-   - Verify `ac.clap.action` field in message content
+    - Verify button click sends message
+    - Check message body matches button text
+    - Verify `ac.clap.action` field in message content
 
 ### Test Data Provided
 
@@ -581,10 +612,10 @@ yarn start
 ### Next Steps
 
 **Manual QA Required**:
+
 - Start dev server: `yarn start`
 - Follow guide: `.sisyphus/notepads/divkit-ai-rendering/manual-qa-guide.md`
 - Update plan checkboxes after verification
 - Commit QA results
 
 **Alternative**: Wait for CI/CD E2E tests to run in GitHub Actions
-
