@@ -1443,7 +1443,12 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                 {/* Group/Bubble 레이아웃: Flexbox 구조 */}
                                 {avatar}
                                 <div className="mx_EventTile_content_wrapper">
-                                    {sender}
+                                    {sender ? (
+                                        <div className="mx_EventTile_senderLine">
+                                            {sender}
+                                            {groupTimestamp}
+                                        </div>
+                                    ) : null}
                                     <div
                                         id={this.id}
                                         className={lineClasses}
@@ -1451,7 +1456,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                         onContextMenu={this.onContextMenu}
                                     >
                                         {this.renderContextMenu()}
-                                        {groupTimestamp}
+                                        {!sender && groupTimestamp}
                                         {groupPadlock}
                                         {replyChain}
                                         {renderTile(this.context.timelineRenderingType, {
@@ -1568,16 +1573,14 @@ function SentReceipt({ messageState }: ISentReceiptProps): JSX.Element {
     }
 
     return (
-        <div className="mx_EventTile_msgOption">
-            <div className="mx_ReadReceiptGroup">
-                <Tooltip label={label} placement="top-end">
-                    <div className="mx_ReadReceiptGroup_button" role="status">
-                        <span className="mx_ReadReceiptGroup_container">
-                            <span className={receiptClasses}>{nonCssBadge}</span>
-                        </span>
-                    </div>
-                </Tooltip>
-            </div>
+        <div className="mx_ReadReceiptGroup">
+            <Tooltip label={label} placement="top-end">
+                <div className="mx_ReadReceiptGroup_button" role="status">
+                    <span className="mx_ReadReceiptGroup_container">
+                        <span className={receiptClasses}>{nonCssBadge}</span>
+                    </span>
+                </div>
+            </Tooltip>
         </div>
     );
 }
