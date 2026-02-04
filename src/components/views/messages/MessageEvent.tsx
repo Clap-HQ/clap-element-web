@@ -38,6 +38,8 @@ import MjolnirBody from "./MjolnirBody";
 import MBeaconBody from "./MBeaconBody";
 import { DecryptionFailureBody } from "./DecryptionFailureBody";
 import { type GetRelationsForEvent, type IEventTileOps } from "../rooms/EventTile";
+import DivKitBody from "./DivKitBody";
+import { extractDivKitCard, type ClapAIContent } from "../../../utils/ClapAIDivKit";
 
 // onMessageAllowed is handled internally
 interface IProps extends Omit<IBodyProps, "onMessageAllowed" | "mediaEventHelper"> {
@@ -271,6 +273,13 @@ export default class MessageEvent extends React.Component<IProps> implements IMe
             // TODO: move to eventTypes when location sharing spec stabilises
             if (M_LOCATION.matches(type) || (type === EventType.RoomMessage && msgtype === MsgType.Location)) {
                 BodyType = MLocationBody;
+            }
+
+            // Check for DivKit card in Clap AI messages
+            const clapAIContent = content as ClapAIContent;
+            const divKitCard = extractDivKitCard(clapAIContent);
+            if (divKitCard) {
+                BodyType = DivKitBody;
             }
         }
 
