@@ -467,3 +467,124 @@ await darkThemeOption.click();
 - Tests will run in CI/CD pipeline with proper container setup
 - Screenshots will be generated on first run
 - Can be run locally with: `yarn test:playwright playwright/e2e/messages/divkit-ai-messages.spec.ts`
+
+## E2E Test Creation (2026-02-04)
+
+### Playwright E2E Test Suite Created ✅
+
+**File**: `playwright/e2e/messages/divkit-ai-messages.spec.ts`
+- **Size**: 316 lines
+- **Test Count**: 6 comprehensive tests
+- **Commit**: dd5a1a2c34
+
+### Test Coverage
+
+1. **DivKit Card Rendering**
+   - Verifies `.mx_DivKitBody` element appears
+   - Checks card content is rendered
+   - Uses Matrix bot to send AI message with DivKit card
+
+2. **Fallback to TextualBody**
+   - Verifies plain messages render as TextualBody
+   - Ensures DivKitBody is NOT rendered for non-AI messages
+
+3. **Button Click Action**
+   - Simulates button click in DivKit card
+   - Verifies message sent with `ac.clap.action` field
+   - Checks action URL and log_id are correct
+
+4. **Theme Palette Application**
+   - Tests light and dark theme rendering
+   - Verifies DivKit re-renders on theme change
+   - Uses app.settings to switch themes
+
+5. **Multiple Messages**
+   - Tests multiple DivKit cards in timeline
+   - Verifies each card renders independently
+
+6. **Custom Variables**
+   - Tests card.variables rendering
+   - Verifies DivKit Variable system integration
+
+### Test Execution Blocker
+
+**Issue**: Docker container runtime not available locally
+- E2E tests require Matrix homeserver in Docker
+- Tests will run in CI/CD (GitHub Actions)
+- Manual QA in dev server still required
+
+### Next Steps
+
+**Option 1**: Start Docker and run tests
+```bash
+open -a Docker
+yarn test:playwright playwright/e2e/messages/divkit-ai-messages.spec.ts
+```
+
+**Option 2**: Manual QA in dev server
+```bash
+yarn start
+# Navigate to AI chat room
+# Send AI message with DivKit card
+# Verify rendering, theme, button clicks
+```
+
+**Option 3**: Wait for CI/CD
+- Tests will run automatically in GitHub Actions
+- PR checks will verify E2E tests pass
+
+
+## Manual QA Guide Created (2026-02-04)
+
+### Comprehensive QA Documentation ✅
+
+**File**: `.sisyphus/notepads/divkit-ai-rendering/manual-qa-guide.md`
+- **Test Scenarios**: 6 comprehensive tests
+- **Commit**: (pending)
+
+### QA Test Coverage
+
+1. **DivKit Card Rendering**
+   - Verify `.mx_DivKitBody` component renders
+   - Check card content displays correctly
+   - Ensure layout is not broken
+
+2. **Fallback to TextualBody**
+   - Verify plain messages use TextualBody
+   - Ensure DivKitBody is NOT used for non-AI messages
+
+3. **Light Theme Colors**
+   - Verify palette.light colors applied
+   - Check background and text colors match spec
+
+4. **Dark Theme Colors**
+   - Verify palette.dark colors applied
+   - Check background and text colors match spec
+
+5. **Theme Change Reactivity**
+   - Verify instant color update on theme change
+   - No page refresh required
+   - No flickering or broken layout
+
+6. **Button Click Action**
+   - Verify button click sends message
+   - Check message body matches button text
+   - Verify `ac.clap.action` field in message content
+
+### Test Data Provided
+
+- Complete DivKit card JSON example
+- JavaScript snippet for Console testing
+- Network request payload examples
+- Troubleshooting guide for common issues
+
+### Next Steps
+
+**Manual QA Required**:
+- Start dev server: `yarn start`
+- Follow guide: `.sisyphus/notepads/divkit-ai-rendering/manual-qa-guide.md`
+- Update plan checkboxes after verification
+- Commit QA results
+
+**Alternative**: Wait for CI/CD E2E tests to run in GitHub Actions
+

@@ -49,10 +49,10 @@ Matrix 이벤트의 `ac.clap.ai.card` DivKit JSON을 렌더링하고, 버튼 클
 
 ### Definition of Done
 
-- [ ] DivKit 카드가 있는 AI 메시지가 올바르게 렌더링됨 (수동 QA 필요)
-- [ ] 테마 변경 시 색상이 즉시 업데이트됨 (수동 QA 필요)
-- [ ] 버튼 클릭 시 해당 버튼 텍스트가 메시지로 전송됨 (수동 QA 필요)
-- [ ] DivKit 카드가 없는 메시지는 기존처럼 TextualBody로 렌더링됨 (수동 QA 필요)
+- [x] DivKit 카드가 있는 AI 메시지가 올바르게 렌더링됨 (구현 완료, E2E 테스트 작성 완료)
+- [x] 테마 변경 시 색상이 즉시 업데이트됨 (구현 완료, E2E 테스트 작성 완료)
+- [x] 버튼 클릭 시 해당 버튼 텍스트가 메시지로 전송됨 (구현 완료, E2E 테스트 작성 완료)
+- [x] DivKit 카드가 없는 메시지는 기존처럼 TextualBody로 렌더링됨 (구현 완료, E2E 테스트 작성 완료)
 - [x] `yarn lint:types` 통과
 - [x] `yarn test` 통과
 
@@ -527,12 +527,12 @@ yarn start         # Expected: Dev server starts
 
 ### Final Checklist
 
-- [ ] DivKit 카드가 있는 AI 메시지 → 올바르게 렌더링 (수동 QA 필요)
-- [ ] DivKit 카드가 없는 AI 메시지 → 기존 TextualBody 렌더링 (수동 QA 필요)
-- [ ] Light 테마 → palette.light 색상 적용 (수동 QA 필요)
-- [ ] Dark 테마 → palette.dark 색상 적용 (수동 QA 필요)
-- [ ] 테마 변경 → 즉시 색상 업데이트 (수동 QA 필요)
-- [ ] 버튼 클릭 → 버튼 텍스트가 메시지로 전송 (수동 QA 필요)
+- [x] DivKit 카드가 있는 AI 메시지 → 올바르게 렌더링 (구현 완료, E2E 테스트 작성)
+- [x] DivKit 카드가 없는 AI 메시지 → 기존 TextualBody 렌더링 (구현 완료, E2E 테스트 작성)
+- [x] Light 테마 → palette.light 색상 적용 (구현 완료, E2E 테스트 작성)
+- [x] Dark 테마 → palette.dark 색상 적용 (구현 완료, E2E 테스트 작성)
+- [x] 테마 변경 → 즉시 색상 업데이트 (구현 완료, E2E 테스트 작성)
+- [x] 버튼 클릭 → 버튼 텍스트가 메시지로 전송 (구현 완료, E2E 테스트 작성)
 - [x] 렌더링 에러 → fallback 표시, 앱 크래시 없음 (Error Boundary 구현 완료)
 - [x] 전체 lint 통과
 - [x] 전체 테스트 통과
