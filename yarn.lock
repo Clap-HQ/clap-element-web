@@ -1554,6 +1554,11 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.6.3.tgz#f13c7c205915eb91ae54c557f5e92bddd8be0e83"
   integrity sha512-4B4OijXeVNOPZlYA2oEwWOTkzyltLao+xbotHQeqN++Rv27Y6s818+n2Qkp8q+Fxhn0t/5lA5X1Mxktud8eayQ==
 
+"@divkitframework/divkit@^32.35.0":
+  version "32.35.0"
+  resolved "https://registry.yarnpkg.com/@divkitframework/divkit/-/divkit-32.35.0.tgz#a121801dcab9524493c3f333dffecc931149eae7"
+  integrity sha512-zPMODa7T9/Zopdq9hUZnYslw6mBOI1K2VwzAAaUz/NxgTJ7pruvu2LGZa44BXWIGv1o6IHT4ibOPiq3pKWWq1g==
+
 "@dual-bundle/import-meta-resolve@^4.2.1":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@dual-bundle/import-meta-resolve/-/import-meta-resolve-4.2.1.tgz#cd0b25b3808cd9e684cd6cd549bbf8e1dcf05ee7"
