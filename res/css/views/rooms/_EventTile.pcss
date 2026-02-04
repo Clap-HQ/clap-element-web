@@ -246,12 +246,6 @@ $left-gutter: 64px;
         &.mx_EventTile_continuation .mx_EventTile_line {
             clear: both;
         }
-
-        &:hover {
-            .mx_EventTile_line {
-                background-color: $event-selected-color;
-            }
-        }
     }
 
     &[data-layout="bubble"],
@@ -456,6 +450,15 @@ $left-gutter: 64px;
 
         .mx_EventTile_footer {
             margin: var(--cpd-space-1-5x) 0;
+        }
+
+        /* hover/selected/focus 시 EventTile 전체에 배경색 적용 */
+        &:hover,
+        &:focus-visible:focus-within,
+        &.mx_EventTile_actionBarFocused,
+        &.mx_EventTile_isEditing,
+        &.mx_EventTile_selected {
+            background-color: rgba(0, 0, 0, 0.1);
         }
     }
 
