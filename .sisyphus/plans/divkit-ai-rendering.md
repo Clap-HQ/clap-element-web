@@ -373,9 +373,9 @@ Task 7 (통합 검증)
     - [ ] "거부" 버튼 클릭 → `{ body: "거부", "ac.clap.action": { url: "...", log_id: "..." } }` 전송됨
     - [ ] 전송된 메시지가 타임라인에 표시됨 (body 텍스트 보임)
 
-                      **Commit**: YES
-                      - Message: `feat(ai): implement button action handling for DivKit cards`
-                      - Files: `src/utils/ClapAIDivKit.ts`, `src/components/views/messages/DivKitBody.tsx`
+    **Commit**: YES
+    - Message: `feat(ai): implement button action handling for DivKit cards`
+    - Files: `src/utils/ClapAIDivKit.ts`, `src/components/views/messages/DivKitBody.tsx`
 
 ---
 
@@ -456,7 +456,7 @@ Task 7 (통합 검증)
 
 ---
 
-- [ ]   7. 통합 검증 및 정리
+- [x]   7. 통합 검증 및 정리
 
     **What to do**:
     - 전체 lint 통과 확인: `yarn lint`

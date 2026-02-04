@@ -7,9 +7,8 @@ Please see LICENSE files in the repository root for full details.
 
 import React, { useEffect, useRef } from "react";
 import { render, createGlobalVariablesController } from "@divkitframework/divkit/client";
-import type { DivJson } from "@divkitframework/divkit/typings/common";
-import "@divkitframework/divkit/dist/client.css";
 
+import type { DivJson } from "@divkitframework/divkit/typings/common";
 import { useTheme } from "../../../hooks/useTheme";
 import {
     extractDivKitCard,
@@ -19,9 +18,13 @@ import {
     type ClapAIContent,
 } from "../../../utils/ClapAIDivKit";
 import type { IBodyProps } from "./IBodyProps";
+import "@divkitframework/divkit/dist/client.css";
 
-const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => {
-    const { mxEvent } = props;
+interface Props extends IBodyProps {
+    forwardedRef?: React.Ref<HTMLDivElement>;
+}
+
+const DivKitBody: React.FC<Props> = ({ mxEvent, forwardedRef, ...otherProps }) => {
     const { theme } = useTheme();
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -65,9 +68,10 @@ const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => 
             },
         });
 
+        const container = containerRef.current;
         return () => {
-            if (containerRef.current) {
-                containerRef.current.innerHTML = "";
+            if (container) {
+                container.innerHTML = "";
             }
         };
     }, [mxEvent, theme, card, content]);
@@ -76,8 +80,8 @@ const DivKitBody = React.forwardRef<HTMLDivElement, IBodyProps>((props, ref) => 
         return null;
     }
 
-    return <div ref={containerRef} className="mx_DivKitBody" />;
-});
+    return <div ref={forwardedRef || containerRef} className="mx_DivKitBody" />;
+};
 
 DivKitBody.displayName = "DivKitBody";
 

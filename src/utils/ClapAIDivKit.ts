@@ -6,11 +6,11 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import { createVariable } from "@divkitframework/divkit/client";
-import type { AnyVariable } from "@divkitframework/divkit/typings/variables";
-import type { Action } from "@divkitframework/divkit/typings/common";
 import { EventType, type MatrixEvent } from "matrix-js-sdk/src/matrix";
 import { type RoomMessageEventContent } from "matrix-js-sdk/src/types";
 
+import type { AnyVariable } from "@divkitframework/divkit/typings/variables";
+import type { Action } from "@divkitframework/divkit/typings/common";
 import { MatrixClientPeg } from "../MatrixClientPeg";
 
 /**

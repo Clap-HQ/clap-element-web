@@ -57,8 +57,8 @@ export type CustomTheme = {
 
 export function enumerateThemes(): { [key: string]: string } {
     const BUILTIN_THEMES = {
-        "light": _t("common|light"),
-        "dark": _t("common|dark"),
+        light: _t("common|light"),
+        dark: _t("common|dark"),
     };
     const customThemes = SettingsStore.getValue("custom_themes") || [];
     const customThemeNames: Record<string, string> = {};
@@ -83,8 +83,7 @@ export interface ITheme {
 }
 
 export function getOrderedThemes(): ITheme[] {
-    const themes = Object.entries(enumerateThemes())
-        .map((p) => ({ id: p[0], name: p[1] })); // convert pairs to objects for code readability
+    const themes = Object.entries(enumerateThemes()).map((p) => ({ id: p[0], name: p[1] })); // convert pairs to objects for code readability
     const builtInThemes = themes.filter((p) => !p.id.startsWith("custom-"));
     const collator = new Intl.Collator();
     const customThemes = themes
