@@ -59,7 +59,7 @@ export function getAvatarSize(params: GetAvatarSizeParams): AvatarSizeResult {
         timelineRenderingType === TimelineRenderingType.ThreadsList ||
         (timelineRenderingType === TimelineRenderingType.Thread && !continuation)
     ) {
-        avatarSize = "32px";
+        avatarSize = "30px";
         needsSenderProfile = true;
     } else if (eventType === EventType.RoomCreate || isBubbleMessage) {
         avatarSize = null;

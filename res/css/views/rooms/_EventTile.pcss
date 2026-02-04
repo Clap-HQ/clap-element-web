@@ -1198,12 +1198,15 @@ $left-gutter: 64px;
 
 /* For style rules of ThreadView, see _ThreadPanel.pcss */
 .mx_ThreadView {
-    --ThreadView_group_spacing-start: 56px; /* 56px: 64px - 8px (padding) */
-    --ThreadView_group_spacing-end: 8px; /* same as padding */
+    --ThreadView_group_spacing-start: 0;
+    --ThreadView_group_spacing-end: 0;
+    --BaseCard_EventTile-spacing-inline: $spacing-8;
 
     .mx_EventTile {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: $spacing-8;
 
         .mx_EventTile_roomName {
             display: none;
@@ -1302,36 +1305,31 @@ $left-gutter: 64px;
             }
 
             &.mx_EventTile_continuation {
-                padding-block-start: 0; /* Cancel padding-block-start */
+                padding-block-start: 0;
+
+                .mx_EventTile_content_wrapper {
+                    margin-left: calc(30px + $spacing-8);
+                }
             }
         }
 
         &[data-layout="group"] {
             width: 100%;
 
-            .mx_EventTile_senderDetails {
+            .mx_EventTile_content_wrapper {
+                flex: 1;
+                min-width: 0;
                 display: flex;
-                align-items: center;
-                gap: $spacing-16; /* gap between the avatar and the sender ID */
-                padding-inline-start: $spacing-8;
+                flex-direction: column;
+            }
 
-                a {
-                    flex: 1;
-                    min-width: unset;
-                    max-width: 100%;
-                    display: flex;
-                    align-items: center;
-
-                    .mx_DisambiguatedProfile {
-                        margin-left: 8px;
-                        flex: 1;
-                    }
-                }
+            .mx_EventTile_line {
+                padding-inline-start: 0;
             }
 
             .mx_MessageTimestamp {
-                position: absolute; /* for IRC layout */
-                top: 2px; /* Align with mx_EventTile_content */
+                position: absolute;
+                top: 2px;
             }
         }
 
