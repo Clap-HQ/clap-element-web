@@ -1,0 +1,17 @@
+/*
+Copyright 2024 New Vector Ltd.
+
+SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+Please see LICENSE files in the repository root for full details.
+*/
+
+/* DivKit AI message rendering - remove padding and background from container */
+.mx_EventTile:has(.mx_DivKitBody) .mx_EventTile_line {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Ensure DivKit content has proper spacing */
+.mx_DivKitBody {
+    width: 100%;
+}
