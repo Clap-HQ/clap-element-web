@@ -350,6 +350,30 @@ describe("editor/deserialize", function () {
             const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
             expect(parts).toMatchSnapshot();
         });
+        it("table is converted back to pipe table markdown", function () {
+            const html =
+                "<table><thead><tr><th>Name</th><th>Age</th></tr></thead>" +
+                "<tbody><tr><td>Alice</td><td>30</td></tr><tr><td>Bob</td><td>25</td></tr></tbody></table>";
+            const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
+            const text = parts.map((p) => p.text).join("");
+            expect(text).toContain("| Name | Age |");
+            expect(text).toContain("| --- | --- |");
+            expect(text).toContain("| Alice | 30 |");
+            expect(text).toContain("| Bob | 25 |");
+        });
+
+        it("table with alignment preserves alignment in separator", function () {
+            const html =
+                '<table><thead><tr><th style="text-align:left">L</th>' +
+                '<th style="text-align:center">C</th>' +
+                '<th style="text-align:right">R</th></tr></thead>' +
+                "<tbody><tr><td>a</td><td>b</td><td>c</td></tr></tbody></table>";
+            const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
+            const text = parts.map((p) => p.text).join("");
+            expect(text).toContain(":---");
+            expect(text).toContain(":---:");
+            expect(text).toContain("---:");
+        });
     });
     describe("plaintext messages", function () {
         it("turns html tags back into markdown", function () {

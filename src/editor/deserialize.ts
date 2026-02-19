@@ -158,6 +158,73 @@ function parseChildren(n: Node, pc: PartCreator, opts: IParseOptions, mkListItem
     });
 }
 
+/**
+ * Convert an HTML <table> element back into GFM pipe table markdown.
+ */
+function parseTable(n: Node, pc: PartCreator): Part[] {
+    const table = n as HTMLTableElement;
+    const parts: Part[] = [];
+    const rows: string[][] = [];
+    const alignments: string[] = [];
+
+    // Extract header cells
+    const thead = table.querySelector("thead");
+    if (thead) {
+        const headerRow: string[] = [];
+        const ths = thead.querySelectorAll("th");
+        ths.forEach((th) => {
+            headerRow.push(th.textContent || "");
+            const style = th.getAttribute("style") || "";
+            const alignMatch = /text-align:\s*(left|center|right)/.exec(style);
+            alignments.push(alignMatch ? alignMatch[1] : "");
+        });
+        rows.push(headerRow);
+    }
+
+    // Extract body cells
+    const tbody = table.querySelector("tbody");
+    if (tbody) {
+        tbody.querySelectorAll("tr").forEach((tr) => {
+            const row: string[] = [];
+            tr.querySelectorAll("td").forEach((td) => {
+                row.push(td.textContent || "");
+            });
+            rows.push(row);
+        });
+    }
+
+    if (rows.length < 1) return parseChildren(n, pc, { shouldEscape: false });
+
+    // Determine column count and max widths for padding
+    const colCount = Math.max(...rows.map((r) => r.length), alignments.length);
+
+    // Build header row
+    const headerCells = rows[0] || [];
+    parts.push(pc.plain("| " + Array.from({ length: colCount }, (_, i) => headerCells[i] || "").join(" | ") + " |"));
+    parts.push(pc.newline());
+
+    // Build separator row
+    const separatorCells = Array.from({ length: colCount }, (_, i) => {
+        const align = alignments[i] || "";
+        const dashes = "---";
+        if (align === "center") return `:${dashes}:`;
+        if (align === "right") return `${dashes}:`;
+        if (align === "left") return `:${dashes}`;
+        return dashes;
+    });
+    parts.push(pc.plain("| " + separatorCells.join(" | ") + " |"));
+
+    // Build body rows
+    for (let i = 1; i < rows.length; i++) {
+        parts.push(pc.newline());
+        parts.push(
+            pc.plain("| " + Array.from({ length: colCount }, (_, j) => rows[i][j] || "").join(" | ") + " |"),
+        );
+    }
+
+    return parts;
+}
+
 function parseNode(n: Node, pc: PartCreator, opts: IParseOptions, mkListItem?: (li: Node) => Part[]): Part[] {
     if (checkIgnored(n)) return [];
 
@@ -195,6 +262,8 @@ function parseNode(n: Node, pc: PartCreator, opts: IParseOptions, mkListItem?: (
                     return [pc.plain("<sup>"), ...parseChildren(n, pc, opts), pc.plain("</sup>")];
                 case "U":
                     return [pc.plain("<u>"), ...parseChildren(n, pc, opts), pc.plain("</u>")];
+                case "TABLE":
+                    return parseTable(n, pc);
                 case "PRE":
                     return parseCodeBlock(n, pc, opts);
                 case "CODE": {

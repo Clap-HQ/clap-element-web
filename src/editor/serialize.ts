@@ -17,6 +17,141 @@ import SettingsStore from "../settings/SettingsStore";
 import SdkConfig from "../SdkConfig";
 import { Type } from "./parts";
 
+/**
+ * Parse a GFM table alignment separator row and return alignment per column.
+ * Returns null if the row is not a valid separator.
+ */
+function parseTableSeparator(row: string): Array<"left" | "center" | "right" | ""> | null {
+    const stripped = row.trim().replace(/^\||\|$/g, "");
+    const cells = stripped.split("|").map((c) => c.trim());
+    if (cells.length === 0) return null;
+
+    const alignments: Array<"left" | "center" | "right" | ""> = [];
+    for (const cell of cells) {
+        if (!/^:?-{3,}:?$/.test(cell)) return null;
+        const leftColon = cell.startsWith(":");
+        const rightColon = cell.endsWith(":");
+        if (leftColon && rightColon) alignments.push("center");
+        else if (rightColon) alignments.push("right");
+        else if (leftColon) alignments.push("left");
+        else alignments.push("");
+    }
+    return alignments;
+}
+
+/**
+ * Split a pipe-delimited table row into cell contents.
+ */
+function splitTableRow(row: string): string[] {
+    const stripped = row.trim().replace(/^\||\|$/g, "");
+    return stripped.split("|").map((c) => c.trim());
+}
+
+/**
+ * Build an HTML table cell tag with optional alignment.
+ */
+function buildCell(tag: "th" | "td", content: string, alignment: string): string {
+    if (alignment) {
+        return `<${tag} style="text-align:${alignment}">${escapeHtml(content)}</${tag}>`;
+    }
+    return `<${tag}>${escapeHtml(content)}</${tag}>`;
+}
+
+/**
+ * Convert GFM pipe tables in markdown to HTML <table> elements.
+ * Processes only outside of fenced code blocks (``` or ~~~).
+ */
+export function convertGfmTablesToHtml(md: string): string {
+    const lines = md.split("\n");
+    const result: string[] = [];
+    let inCodeBlock = false;
+    let tableLines: string[] = [];
+
+    const flushTable = (): void => {
+        if (tableLines.length < 3) {
+            result.push(...tableLines);
+            tableLines = [];
+            return;
+        }
+
+        const headerRow = tableLines[0];
+        const separatorRow = tableLines[1];
+        const alignments = parseTableSeparator(separatorRow);
+
+        if (!alignments) {
+            result.push(...tableLines);
+            tableLines = [];
+            return;
+        }
+
+        const headerCells = splitTableRow(headerRow);
+        if (headerCells.length !== alignments.length) {
+            result.push(...tableLines);
+            tableLines = [];
+            return;
+        }
+
+        // Build HTML table
+        let html = "<table><thead><tr>";
+        headerCells.forEach((cell, i) => {
+            html += buildCell("th", cell, alignments[i]);
+        });
+        html += "</tr></thead><tbody>";
+
+        for (let i = 2; i < tableLines.length; i++) {
+            const cells = splitTableRow(tableLines[i]);
+            html += "<tr>";
+            alignments.forEach((alignment, colIndex) => {
+                const content = colIndex < cells.length ? cells[colIndex] : "";
+                html += buildCell("td", content, alignment);
+            });
+            html += "</tr>";
+        }
+
+        html += "</tbody></table>";
+        result.push(html);
+        tableLines = [];
+    };
+
+    const isTableRow = (line: string): boolean => {
+        const trimmed = line.trim();
+        return trimmed.startsWith("|") && trimmed.includes("|", 1);
+    };
+
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+
+        // Track fenced code blocks
+        if (/^(`{3,}|~{3,})/.test(trimmedLine)) {
+            if (!inCodeBlock) {
+                flushTable();
+                inCodeBlock = true;
+                result.push(line);
+                continue;
+            } else {
+                inCodeBlock = false;
+                result.push(line);
+                continue;
+            }
+        }
+
+        if (inCodeBlock) {
+            result.push(line);
+            continue;
+        }
+
+        if (isTableRow(line)) {
+            tableLines.push(line);
+        } else {
+            flushTable();
+            result.push(line);
+        }
+    }
+
+    flushTable();
+    return result.join("\n");
+}
+
 export function mdSerialize(model: EditorModel): string {
     return model.parts.reduce((html, part) => {
         switch (part.type) {
@@ -129,6 +264,9 @@ export function htmlSerializeFromMdIfNeeded(md: string, { forceHTML = false } = 
             return `${p1}\n<div`;
         });
     }
+
+    // Convert GFM pipe tables to HTML before Markdown parsing
+    md = convertGfmTablesToHtml(md);
 
     const parser = new Markdown(md);
     if (!parser.isPlainText() || forceHTML) {

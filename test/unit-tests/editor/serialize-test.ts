@@ -9,7 +9,7 @@ Please see LICENSE files in the repository root for full details.
 import { mocked } from "jest-mock";
 
 import EditorModel from "../../../src/editor/model";
-import { htmlSerializeFromMdIfNeeded, htmlSerializeIfNeeded } from "../../../src/editor/serialize";
+import { convertGfmTablesToHtml, htmlSerializeFromMdIfNeeded, htmlSerializeIfNeeded } from "../../../src/editor/serialize";
 import { createPartCreator } from "./mock";
 import { type IConfigOptions } from "../../../src/IConfigOptions";
 import SettingsStore from "../../../src/settings/SettingsStore";
@@ -166,6 +166,75 @@ describe("editor/serialize", function () {
         it("should treat tags not in allowlist as plaintext even if escaped", () => {
             const html = htmlSerializeFromMdIfNeeded("\\<b>test</b>", {});
             expect(html).toBe("&lt;b&gt;test&lt;/b&gt;");
+        });
+    });
+
+    describe("GFM table conversion", () => {
+        describe("convertGfmTablesToHtml", () => {
+            it("converts a basic 2x2 table", () => {
+                const input = "| A | B |\n| --- | --- |\n| 1 | 2 |";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toBe(
+                    "<table><thead><tr><th>A</th><th>B</th></tr></thead>" +
+                        "<tbody><tr><td>1</td><td>2</td></tr></tbody></table>",
+                );
+            });
+
+            it("supports text-align from separator colons", () => {
+                const input = "| Left | Center | Right |\n| :--- | :---: | ---: |\n| a | b | c |";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toContain('<th style="text-align:left">Left</th>');
+                expect(result).toContain('<th style="text-align:center">Center</th>');
+                expect(result).toContain('<th style="text-align:right">Right</th>');
+                expect(result).toContain('<td style="text-align:left">a</td>');
+                expect(result).toContain('<td style="text-align:center">b</td>');
+                expect(result).toContain('<td style="text-align:right">c</td>');
+            });
+
+            it("does not convert pipe tables inside fenced code blocks", () => {
+                const input = "```\n| A | B |\n| --- | --- |\n| 1 | 2 |\n```";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toBe(input);
+                expect(result).not.toContain("<table>");
+            });
+
+            it("handles text before and after a table", () => {
+                const input = "Hello\n\n| A | B |\n| --- | --- |\n| 1 | 2 |\n\nWorld";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toContain("Hello");
+                expect(result).toContain("<table>");
+                expect(result).toContain("World");
+            });
+
+            it("does not convert rows without a valid separator", () => {
+                const input = "| A | B |\n| not-a-sep |\n| 1 | 2 |";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).not.toContain("<table>");
+            });
+
+            it("handles multiple body rows", () => {
+                const input = "| H1 | H2 |\n| --- | --- |\n| a | b |\n| c | d |\n| e | f |";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toContain("<tr><td>a</td><td>b</td></tr>");
+                expect(result).toContain("<tr><td>c</td><td>d</td></tr>");
+                expect(result).toContain("<tr><td>e</td><td>f</td></tr>");
+            });
+
+            it("escapes HTML entities in cell content", () => {
+                const input = "| A |\n| --- |\n| <script> |";
+                const result = convertGfmTablesToHtml(input);
+                expect(result).toContain("&lt;script&gt;");
+                expect(result).not.toContain("<script>");
+            });
+        });
+
+        it("htmlSerializeFromMdIfNeeded converts GFM table to HTML", () => {
+            const input = "| Name | Age |\n| --- | --- |\n| Alice | 30 |";
+            const html = htmlSerializeFromMdIfNeeded(input, {});
+            expect(html).toContain("<table>");
+            expect(html).toContain("<th>Name</th>");
+            expect(html).toContain("<td>Alice</td>");
+            expect(html).toContain("<td>30</td>");
         });
     });
 

@@ -181,4 +181,23 @@ describe("Markdown parser test", () => {
             expect(md.toHTML()).toEqual(expectedResult);
         });
     });
+
+    describe("GFM table HTML tags", () => {
+        it("treats table HTML block as non-plain text", () => {
+            const tableHtml =
+                "<table><thead><tr><th>A</th></tr></thead><tbody><tr><td>1</td></tr></tbody></table>\n";
+            const md = new Markdown(tableHtml);
+            expect(md.isPlainText()).toBe(false);
+        });
+
+        it("renders table HTML block correctly including alignment styles", () => {
+            const tableHtml =
+                '<table><thead><tr><th style="text-align:center">A</th></tr></thead>' +
+                '<tbody><tr><td style="text-align:center">1</td></tr></tbody></table>\n';
+            const md = new Markdown(tableHtml);
+            expect(md.isPlainText()).toBe(false);
+            const html = md.toHTML();
+            expect(html).toContain('style="text-align:center"');
+        });
+    });
 });
