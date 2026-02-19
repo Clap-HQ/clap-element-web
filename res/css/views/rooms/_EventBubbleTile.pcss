@@ -149,8 +149,7 @@ Please see LICENSE files in the repository root for full details.
     }
 
     .mx_MediaBody {
-        /* leave space for the timestamp */
-        padding-right: 48px !important;
+        /* timestamp가 버블 바깥에 배치되므로 padding-right 불필요 */
     }
 
     .mx_MImageBody {
@@ -186,6 +185,13 @@ Please see LICENSE files in the repository root for full details.
             .mx_MBeaconBody {
                 border-bottom-right-radius: var(--cornerRadius) !important;
             }
+
+            /* timestamp를 버블 오른쪽 바깥에 배치 */
+            > a, /* timestamp wrapper anchor */
+            .mx_MessageActionBar + .mx_MessageTimestamp {
+                left: calc(100% + 8px);
+                right: auto;
+            }
         }
 
         .mx_MessageActionBar {
@@ -200,6 +206,10 @@ Please see LICENSE files in the repository root for full details.
 
         .mx_ReactionsRow {
             justify-content: flex-start;
+        }
+
+        /* continuation 메시지(avatar 없음)에서만 ReactionsRow에 margin-left 적용 */
+        &.mx_EventTile_continuation .mx_ReactionsRow {
             margin-left: calc(var(--avatarSize) + var(--EventTile_bubble_gap-inline));
         }
 
@@ -225,6 +235,13 @@ Please see LICENSE files in the repository root for full details.
             .mx_MLocationBody_map,
             .mx_MBeaconBody {
                 border-bottom-left-radius: var(--cornerRadius) !important;
+            }
+
+            /* timestamp를 버블 왼쪽 바깥에 배치 */
+            > a, /* timestamp wrapper anchor */
+            .mx_MessageActionBar + .mx_MessageTimestamp {
+                right: calc(100% + 8px);
+                left: auto;
             }
         }
 
@@ -279,6 +296,7 @@ Please see LICENSE files in the repository root for full details.
         border-top-left-radius: var(--cornerRadius);
         border-top-right-radius: var(--cornerRadius);
 
+        /* timestamp는 버블 바깥에 배치 - data-self 속성에 따라 좌/우 위치가 결정됨 */
         /* the selector here is quite weird because timestamps can appear linked & unlinked and in different places */
         /* in the DOM depending on the specific rendering context */
         > a, /* timestamp wrapper anchor */
@@ -286,8 +304,8 @@ Please see LICENSE files in the repository root for full details.
             position: absolute;
             padding: 4px 8px;
             bottom: 0;
-            right: 0;
             z-index: 3; /* above media and location share maps */
+            white-space: nowrap;
         }
 
         &.mx_EventTile_mediaLine {
@@ -357,7 +375,7 @@ Please see LICENSE files in the repository root for full details.
             .mx_EventTile_content by 1px */
         /* to avoid anti-zalgo cutting off our larger than text emojis. */
         padding: calc(var(--gutterSize) - 1px);
-        padding-right: 60px; /* space for the timestamp */
+        /* timestamp가 버블 바깥에 배치되므로 padding-right 불필요 */
         background: var(--backgroundColor);
 
         .mx_EventTile_content {
@@ -528,7 +546,7 @@ Please see LICENSE files in the repository root for full details.
     --backgroundColor: transparent;
 
     .mx_EventTile_line.mx_EventTile_emote {
-        padding-right: 60px; /* align with bubbles text */
+        /* timestamp가 버블 바깥에 배치되므로 padding-right 불필요 */
         font-style: italic;
 
         > a {

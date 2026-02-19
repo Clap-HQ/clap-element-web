@@ -1142,7 +1142,11 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         // If we have reactions or a pinned message badge, we need a footer
         const hasFooter = Boolean((reactionsRow && this.state.reactions) || pinnedMessageBadge);
 
-        const groupTimestamp = !useIRCLayout ? linkedTimestamp : null;
+        const useBubbleLayout = this.props.layout === Layout.Bubble;
+        // Bubble layout: timestamp는 항상 mx_EventTile_line 안에 (버블 바깥에 배치하기 위해)
+        // Group layout: timestamp는 senderLine 안에 (sender 옆에 표시)
+        const groupTimestamp = !useIRCLayout && !useBubbleLayout ? linkedTimestamp : null;
+        const bubbleTimestamp = useBubbleLayout ? linkedTimestamp : null;
         const ircTimestamp = useIRCLayout ? linkedTimestamp : null;
         const groupPadlock = !useIRCLayout && !isBubbleMessage && this.renderE2EPadlock();
         const ircPadlock = useIRCLayout && !isBubbleMessage && this.renderE2EPadlock();
@@ -1208,7 +1212,12 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                     <>
                         {avatar}
                         <div className="mx_EventTile_content_wrapper">
-                            {sender}
+                            {sender ? (
+                                <div className="mx_EventTile_senderLine">
+                                    {sender}
+                                    {groupTimestamp}
+                                </div>
+                            ) : null}
                             <div
                                 id={this.id}
                                 className={lineClasses}
@@ -1216,6 +1225,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                 onContextMenu={this.onContextMenu}
                             >
                                 {this.renderContextMenu()}
+                                {!sender && groupTimestamp}
                                 {replyChain}
                                 {renderTile(TimelineRenderingType.Thread, {
                                     ...this.props,
@@ -1231,7 +1241,6 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                     showHiddenEvents: this.context.showHiddenEvents,
                                 })}
                                 {actionBar}
-                                {linkedTimestamp}
                             </div>
                             {hasFooter && (
                                 <div className="mx_EventTile_footer" key="mx_EventTile_footer">
@@ -1468,6 +1477,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                             permalinkCreator: this.props.permalinkCreator,
                                             showHiddenEvents: this.context.showHiddenEvents,
                                         })}
+                                        {bubbleTimestamp}
                                         {actionBar}
                                     </div>
                                     {hasFooter && (
