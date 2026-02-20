@@ -9,7 +9,12 @@ Please see LICENSE files in the repository root for full details.
 import { mocked } from "jest-mock";
 
 import EditorModel from "../../../src/editor/model";
-import { convertGfmTablesToHtml, htmlSerializeFromMdIfNeeded, htmlSerializeIfNeeded } from "../../../src/editor/serialize";
+import {
+    convertGfmTablesToHtml,
+    convertGfmTaskListToHtml,
+    htmlSerializeFromMdIfNeeded,
+    htmlSerializeIfNeeded,
+} from "../../../src/editor/serialize";
 import { createPartCreator } from "./mock";
 import { type IConfigOptions } from "../../../src/IConfigOptions";
 import SettingsStore from "../../../src/settings/SettingsStore";
@@ -235,6 +240,74 @@ describe("editor/serialize", function () {
             expect(html).toContain("<th>Name</th>");
             expect(html).toContain("<td>Alice</td>");
             expect(html).toContain("<td>30</td>");
+        });
+    });
+
+    describe("GFM task list conversion", () => {
+        describe("convertGfmTaskListToHtml", () => {
+            it("converts checked task list item", () => {
+                const input = "- [x] done task";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toBe('- <input type="checkbox" checked disabled> done task');
+            });
+
+            it("converts unchecked task list item", () => {
+                const input = "- [ ] pending task";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toBe('- <input type="checkbox" disabled> pending task');
+            });
+
+            it("converts uppercase X as checked", () => {
+                const input = "- [X] done task";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toBe('- <input type="checkbox" checked disabled> done task');
+            });
+
+            it("supports * and + list markers", () => {
+                const input = "* [x] star\n+ [ ] plus";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toContain('* <input type="checkbox" checked disabled> star');
+                expect(result).toContain('+ <input type="checkbox" disabled> plus');
+            });
+
+            it("supports ordered list markers", () => {
+                const input = "1. [x] first\n2. [ ] second";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toContain('1. <input type="checkbox" checked disabled> first');
+                expect(result).toContain('2. <input type="checkbox" disabled> second');
+            });
+
+            it("does not convert task list inside fenced code blocks", () => {
+                const input = "```\n- [x] not a task\n```";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toBe(input);
+                expect(result).not.toContain("<input");
+            });
+
+            it("handles mixed task and normal list items", () => {
+                const input = "- [x] task\n- normal item";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toContain('<input type="checkbox" checked disabled>');
+                expect(result).toContain("- normal item");
+            });
+
+            it("preserves indentation for nested task lists", () => {
+                const input = "- [x] parent\n    - [ ] child";
+                const result = convertGfmTaskListToHtml(input);
+                expect(result).toContain('- <input type="checkbox" checked disabled> parent');
+                expect(result).toContain('    - <input type="checkbox" disabled> child');
+            });
+        });
+
+        it("htmlSerializeFromMdIfNeeded converts GFM task list to HTML", () => {
+            const input = "- [x] done\n- [ ] pending";
+            const html = htmlSerializeFromMdIfNeeded(input, {});
+            // DOMParser normalizes boolean attributes: checked → checked=""
+            expect(html).toContain("checked");
+            expect(html).toContain("disabled");
+            expect(html).toContain("<li>");
+            expect(html).toContain("done");
+            expect(html).toContain("pending");
         });
     });
 

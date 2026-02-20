@@ -87,6 +87,13 @@ export const transformTags: NonNullable<IOptions["transformTags"]> = {
         }
         return { tagName, attribs };
     },
+    "input": function (tagName: string, attribs: sanitizeHtml.Attributes) {
+        // Only allow checkbox inputs for GFM task lists
+        if (attribs.type !== "checkbox") {
+            return { tagName: "span", attribs: {} };
+        }
+        return { tagName, attribs };
+    },
     // eslint-disable-next-line @typescript-eslint/naming-convention
     "*": function (tagName: string, attribs: sanitizeHtml.Attributes) {
         // Delete any style previously assigned, style is an allowedTag for font, span & img,
@@ -169,6 +176,7 @@ export const sanitizeHtmlParams: IOptions = {
         "img",
         "details",
         "summary",
+        "input", // for GFM task list checkboxes
     ],
     allowedAttributes: {
         // attribute sanitization happens after transformations, so we have to accept `style` for font, span & img
@@ -182,6 +190,7 @@ export const sanitizeHtmlParams: IOptions = {
         img: ["src", "alt", "title", "style"],
         ol: ["start"],
         code: ["class"], // We don't actually allow all classes, we filter them in transformTags
+        input: ["type", "checked", "disabled"], // for GFM task list checkboxes
     },
     // Lots of these won't come up by default because we don't allow them
     selfClosing: ["img", "br", "hr", "area", "base", "basefont", "input", "link", "meta"],

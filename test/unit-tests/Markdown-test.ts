@@ -182,6 +182,23 @@ describe("Markdown parser test", () => {
         });
     });
 
+    describe("GFM task list checkbox tags", () => {
+        it("treats task list with checkbox as non-plain text", () => {
+            // This is what commonmark receives after convertGfmTaskListToHtml preprocessing
+            const input = '- <input type="checkbox" checked disabled> done';
+            const md = new Markdown(input);
+            expect(md.isPlainText()).toBe(false);
+        });
+
+        it("renders checkbox input tag correctly in list", () => {
+            const input = '- <input type="checkbox" checked disabled> done';
+            const md = new Markdown(input);
+            const html = md.toHTML();
+            expect(html).toContain('<input type="checkbox" checked disabled>');
+            expect(html).toContain("<li>");
+        });
+    });
+
     describe("GFM table HTML tags", () => {
         it("treats table HTML block as non-plain text", () => {
             const tableHtml =

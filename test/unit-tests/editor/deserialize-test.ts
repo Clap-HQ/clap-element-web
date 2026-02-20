@@ -350,6 +350,32 @@ describe("editor/deserialize", function () {
             const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
             expect(parts).toMatchSnapshot();
         });
+        it("task list with checked checkbox is converted back to markdown", function () {
+            const html = '<ul><li><input type="checkbox" checked disabled> done task</li></ul>';
+            const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
+            const text = parts.map((p) => p.text).join("");
+            expect(text).toContain("- [x] done task");
+        });
+
+        it("task list with unchecked checkbox is converted back to markdown", function () {
+            const html = '<ul><li><input type="checkbox" disabled> pending task</li></ul>';
+            const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
+            const text = parts.map((p) => p.text).join("");
+            expect(text).toContain("- [ ] pending task");
+        });
+
+        it("task list with mixed checked and unchecked items", function () {
+            const html =
+                "<ul>" +
+                '<li><input type="checkbox" checked disabled> done</li>' +
+                '<li><input type="checkbox" disabled> pending</li>' +
+                "</ul>";
+            const parts = normalize(parseEvent(htmlMessage(html), createPartCreator()));
+            const text = parts.map((p) => p.text).join("");
+            expect(text).toContain("- [x] done");
+            expect(text).toContain("- [ ] pending");
+        });
+
         it("table is converted back to pipe table markdown", function () {
             const html =
                 "<table><thead><tr><th>Name</th><th>Age</th></tr></thead>" +

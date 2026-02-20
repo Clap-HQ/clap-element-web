@@ -152,6 +152,49 @@ export function convertGfmTablesToHtml(md: string): string {
     return result.join("\n");
 }
 
+/**
+ * Convert GFM task list markers in markdown to HTML checkbox inputs.
+ * Transforms `- [x]` / `- [ ]` into `- <input type="checkbox" checked disabled>` / `- <input type="checkbox" disabled>`.
+ * Processes only outside of fenced code blocks (``` or ~~~).
+ */
+export function convertGfmTaskListToHtml(md: string): string {
+    const lines = md.split("\n");
+    const result: string[] = [];
+    let inCodeBlock = false;
+
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+
+        // Track fenced code blocks
+        if (/^(`{3,}|~{3,})/.test(trimmedLine)) {
+            inCodeBlock = !inCodeBlock;
+            result.push(line);
+            continue;
+        }
+
+        if (inCodeBlock) {
+            result.push(line);
+            continue;
+        }
+
+        // Replace task list markers: - [x], - [ ], * [x], + [x], 1. [x]
+        const taskListMatch = line.match(/^(\s*(?:[-*+]|\d+\.)\s+)\[([ xX])\]\s/);
+        if (taskListMatch) {
+            const prefix = taskListMatch[1];
+            const checked = taskListMatch[2].toLowerCase() === "x";
+            const checkbox = checked
+                ? '<input type="checkbox" checked disabled>'
+                : '<input type="checkbox" disabled>';
+            const rest = line.slice(taskListMatch[0].length);
+            result.push(`${prefix}${checkbox} ${rest}`);
+        } else {
+            result.push(line);
+        }
+    }
+
+    return result.join("\n");
+}
+
 export function mdSerialize(model: EditorModel): string {
     return model.parts.reduce((html, part) => {
         switch (part.type) {
@@ -267,6 +310,9 @@ export function htmlSerializeFromMdIfNeeded(md: string, { forceHTML = false } = 
 
     // Convert GFM pipe tables to HTML before Markdown parsing
     md = convertGfmTablesToHtml(md);
+
+    // Convert GFM task list markers to HTML checkboxes before Markdown parsing
+    md = convertGfmTaskListToHtml(md);
 
     const parser = new Markdown(md);
     if (!parser.isPlainText() || forceHTML) {

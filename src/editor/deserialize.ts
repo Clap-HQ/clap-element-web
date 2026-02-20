@@ -264,6 +264,14 @@ function parseNode(n: Node, pc: PartCreator, opts: IParseOptions, mkListItem?: (
                     return [pc.plain("<u>"), ...parseChildren(n, pc, opts), pc.plain("</u>")];
                 case "TABLE":
                     return parseTable(n, pc);
+                case "INPUT": {
+                    const inputEl = n as HTMLInputElement;
+                    if (inputEl.type === "checkbox") {
+                        const checked = inputEl.hasAttribute("checked") || inputEl.checked;
+                        return [pc.plain(checked ? "[x]" : "[ ]")];
+                    }
+                    return [];
+                }
                 case "PRE":
                     return parseCodeBlock(n, pc, opts);
                 case "CODE": {
